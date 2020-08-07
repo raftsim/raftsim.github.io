@@ -24,7 +24,7 @@ var spoonAngle = Math.PI / 4;
 var spoonAnglePercent = 50;
 let spoonAngleMax = Math.PI * 0.47;
 let spoonAngleFactor = 0.01;
-let spoonAnglePercentFactor = 0.01;
+let spoonAnglePercentFactor = 1;
 var spoonUpward = true;
 
 let strawYMin = -3.45;
@@ -32,7 +32,7 @@ var strawY = -2;
 var strawYPercent = 50;
 let strawYMax = -0.55;
 let strawYFactor = 0.01;
-let strawYPercentFactor = 0.01;
+let strawYPercentFactor = 1;
 var strawUpward = true;
 
 init();
@@ -214,7 +214,7 @@ function render() {
 
     camera.lookAt(scene.position);
 
-    {
+    /* {
         if (strawY <= strawYMin) {
             strawUpward = true;
         } else if (strawY >= strawYMax) {
@@ -229,9 +229,25 @@ function render() {
 
         straw1.position.y = strawY;
         straw2.position.y = strawY;
+    } */
+    {
+        if (strawYPercent <= 0) {
+            strawUpward = true;
+        } else if (strawYPercent >= 100) {
+            strawUpward = false;
+        }
+
+        if (strawUpward) {
+            strawYPercent += strawYPercentFactor
+        } else {
+            strawYPercent -= strawYPercentFactor
+        }
+
+        straw1.position.y = strawYMin + strawYPercent * (strawYMax - strawYMin);
+        straw2.position.y = strawYMin + strawYPercent * (strawYMax - strawYMin);
     }
 
-    {
+    /* {
         console.log(spoonAngle);
         if (spoonAngle <= spoonAngleMin) {
             spoonUpward = true;
@@ -251,6 +267,25 @@ function render() {
         spoon.position.z = 0.56 * Math.cos(spoonAngle);
 
         spoon.rotation.x = -spoonAngle;
+    } */
+    {
+        console.log(spoonAnglePercent);
+        if (spoonAnglePercent <= 0) {
+            spoonUpward = true;
+        } else if (spoonAnglePercent >= 100) {
+            spoonUpward = false;
+        }
+
+        if (spoonUpward) {
+            spoonAnglePercent += spoonAnglePercentFactor
+        } else {
+            spoonAnglePercent -= spoonAnglePercentFactor
+        }
+
+        spoon.position.y = 0.56 * Math.sin(spoonAngleMin + spoonAnglePercent * (spoonAngleMax - spoonAngleMin)) - 2;
+        spoon.position.z = 0.56 * Math.cos(spoonAngleMin + spoonAnglePercent * (spoonAngleMax - spoonAngleMin));
+
+        spoon.rotation.x = -(spoonAngleMin + spoonAnglePercent * (spoonAngleMax - spoonAngleMin));
     }
 
     renderer.render(scene, camera);
