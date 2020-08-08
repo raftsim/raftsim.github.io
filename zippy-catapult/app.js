@@ -19,17 +19,19 @@ var spoon;
 var straw1;
 var straw2;
 
-let spoonAngleMin = 0;
+var spoonAngleMin = 0;
 var spoonAngle = Math.PI / 4;
-let spoonAngleMax = Math.PI * 0.47;
+var spoonAngleMax = Math.PI * 0.46;
 let spoonAngleFactor = 0.01;
 var spoonUpward = true;
 
-let strawYMin = -3.45;
-var strawY = -2;
-let strawYMax = -0.55;
+var strawYMin = -2;
+var strawY = -1.28175;
+var strawYMax = -0.5635;
 let strawYFactor = 0.01;
 var strawUpward = true;
+
+let movement = true;
 
 init();
 animate();
@@ -41,7 +43,11 @@ function init() {
     document.body.appendChild(container);
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 10;
+    // camera.position.z = 10;
+    camera.position.x = -15;
+    camera.position.y = -1;
+    camera.position.z = -0.25;
+    camera.rotation.y = -Math.PI / 2;
 
     // scene
 
@@ -205,12 +211,12 @@ function animate() {
 
 function render() {
 
-    camera.position.x += (mouseX * mouseFactor - camera.position.x) * speedFactor;
+    /* camera.position.x += (mouseX * mouseFactor - camera.position.x) * speedFactor;
     camera.position.y += (- mouseY * mouseFactor - camera.position.y) * speedFactor;
 
-    camera.lookAt(scene.position);
+    camera.lookAt(scene.position); */
 
-    {
+    if (movement) {
         if (strawY <= strawYMin) {
             strawUpward = true;
         } else if (strawY >= strawYMax) {
@@ -222,12 +228,9 @@ function render() {
         } else {
             strawY -= strawYFactor
         }
-
-        straw1.position.y = strawY;
-        straw2.position.y = strawY;
     }
 
-    {
+    /* {
         if (spoonAngle <= spoonAngleMin) {
             spoonUpward = true;
         } else if (spoonAngle >= spoonAngleMax) {
@@ -244,7 +247,23 @@ function render() {
         spoon.position.z = 0.56 * Math.cos(spoonAngle);
 
         spoon.rotation.x = -spoonAngle;
-    }
+    } */
+
+    let strawLength = (0.5635 + strawY) * 2;
+
+    // let assemblyAngle = Math.atan(strawLength / 5.433);
+    let assemblyAngle = Math.asin(strawLength / 5.433);
+    assembly.rotation.x = assemblyAngle;
+    assembly.position.y = 5.433 * Math.sin(-assemblyAngle) - 2;
+    assembly.position.z = 5.433 * Math.cos(assemblyAngle) - 5.433;
+
+    straw1.rotation.x = assemblyAngle;
+    straw1.position.y = strawY;
+    straw1.position.z = assembly.position.z/*  + strawLength * strawLength / 5.433 */;
+
+    straw2.rotation.x = straw1.rotation.x;
+    straw2.position.y = straw1.position.y;
+    straw2.position.z = straw1.position.z;
 
     renderer.render(scene, camera);
 }
