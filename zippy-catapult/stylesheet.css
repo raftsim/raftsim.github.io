@@ -15,17 +15,17 @@ canvas {
 }
 
 form {
-    font-size: 50px;
+    font-size: 20px;
     color: white;
     float: right;
     text-align: right;
 }
 
 input {
-    font-size: 35px;
-    margin-left: 20px;
-    height: 50px;
-    width: 150px;
+    font-size: 18px;
+    margin-left: 10px;
+    height: 20px;
+    width: 100px;
 }
 
 #submit {
@@ -35,13 +35,12 @@ input {
     border-radius: 5px;
     border-color: transparent;
     color: black;
-    padding: 7px 16px;
+    padding: 3px 8px;
     width: auto;
     height: auto;
     text-align: center;
     text-decoration: none;
-    /* display: inline-block; */
-    font-size: 30px;
-    margin: 20px 17px;
+    font-size: 15px;
+    margin: 8px 22px;
     cursor: pointer;
 }
