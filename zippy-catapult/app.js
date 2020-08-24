@@ -24,16 +24,22 @@ let spoonAngleMin = Math.PI * 0.04;
 let spoonAngleDefaultMax = Math.PI * 0.5;
 var spoonAngleMax = spoonAngleDefaultMax;
 var spoonAngle = spoonAngleMax / 2;
+var actualSpoonAngle;
 let spoonAngleFactor = 0.01;
 var spoonUpward = true;
 
 let strawMin = 0;
 let strawMax = 4 - (0.03937008 + 0.5635 + 0.5635);
 var strawLength = strawMax / 2;
+var actualStrawLength;
 let strawFactor = 0.01;
 var strawUpward = true;
 
 let movement = false;
+var glide = false;
+let glideFactor = 0.05;
+// let glideFactor = 1;
+var positionSet = true;
 
 let fixedCamera = false;
 
@@ -104,7 +110,7 @@ function init() {
         scene.add(assembly);
 
         {
-            spoon.position.x = 0.07;
+            // spoon.position.x = 0.07;
             spoon.rotation.y = -Math.PI / 2;
             spoon.rotation.z = -Math.PI / 2;
 
@@ -316,7 +322,8 @@ function render() {
                 spoonAngle -= spoonAngleFactor
             }
         }
-    } else if (ball != null && ball.position.y > 0) {
+    } else if (ball != null && ball.position.y > 0 && positionSet) {
+        console.log("here");
         if (mesh != undefined) {
             mesh.visible = false;
         }
@@ -344,7 +351,7 @@ function render() {
             line2.geometry.setFromPoints(linePoints2);
             mainLine.geometry.setFromPoints(mainPoints);
         }
-    } else if ((ball != null && ball.position.z > 1) && (mesh != null && !mesh.visible)) {
+    } else if ((ball != null && ball.position.z > 1) && (mesh != null && !mesh.visible) && positionSet) {
         ball.position.y = 0;
         fontLoader.load('https://unpkg.com/three/examples/fonts/helvetiker_regular.typeface.json', function (font) {
             var text = "Distance: " + (Math.round((mainPoints[1].z - mainPoints[0].z) * 100) / 100);
@@ -375,29 +382,78 @@ function render() {
 }
 
 function setPositions() {
+    // console.log("text");
     if (assembly != null && straw1 != null && straw2 != null && spoon != null && ball != null) {
-        let assemblyAngle = Math.atan(strawLength / 4.871);
-        assembly.rotation.x = -assemblyAngle;
-        assembly.position.y = -4.871 * Math.sin(-assemblyAngle);
-        assembly.position.z = 4.871 * Math.cos(assemblyAngle) - 4.871;
+        if (glide) {
+            let assemblyAngle = -Math.atan(strawLength / 4.871);
+            if (Math.abs(assembly.rotation.x - assemblyAngle) > 0.1) {
+                let a = assembly.rotation.x + Math.round((assemblyAngle - assembly.rotation.x) * glideFactor * 100) / 100;
+                let s = actualSpoonAngle + Math.round((spoonAngle - actualSpoonAngle) * glideFactor * 100) / 100;
+                let l = actualStrawLength + Math.round((strawLength - actualStrawLength) * glideFactor * 100) / 100;
 
-        spoonAngleMax = spoonAngleDefaultMax + assemblyAngle;
+                console.log(Math.abs(assembly.rotation.x - assemblyAngle));
 
-        straw1.rotation.x = -assemblyAngle;
-        straw1.position.z = strawLength * strawLength / 4.871 + 1.3 * assembly.position.z
-
-        straw2.rotation.x = straw1.rotation.x;
-        straw2.position.z = straw1.position.z;
-
-        spoon.position.y = 0.5635 * Math.sin(Math.PI * 0.5 - spoonAngle + assemblyAngle) + 0.60287008 + assembly.position.y;
-        spoon.position.z = 0.5635 * Math.cos(Math.PI * 0.5 - spoonAngle + assemblyAngle) + assembly.position.z;
-
-        spoon.rotation.x = -(Math.PI * 0.5 - spoonAngle) - assemblyAngle;
-
-        if (ball.position.y == 0 && ball.position.z == 0 && (mesh == undefined || !mesh.visible)) {
-            ball.position.y = spoon.position.y + 5 * Math.sin(spoonAngle - assemblyAngle - Math.PI * 0.07);
-            ball.position.z = spoon.position.z - 5 * Math.cos(spoonAngle - assemblyAngle - Math.PI * 0.07);
+                setPosition(a, s, l);
+                positionSet = false;
+            } else {
+                positionSet = true;
+            }
+        } else {
+            let assemblyAngle = -Math.atan(strawLength / 4.871);
+            setPosition(assemblyAngle, spoonAngle, strawLength);
+            {
+                /* assembly.rotation.x = assemblyAngle;
+                assembly.position.y = -4.871 * Math.sin(assemblyAngle);
+                assembly.position.z = 4.871 * Math.cos(-assemblyAngle) - 4.871;
+    
+                spoonAngleMax = spoonAngleDefaultMax - assemblyAngle;
+    
+                straw1.rotation.x = assemblyAngle;
+                straw1.position.z = strawLength * strawLength / 4.871 + 1.3 * assembly.position.z
+    
+                straw2.rotation.x = straw1.rotation.x;
+                straw2.position.z = straw1.position.z;
+    
+                spoon.position.y = 0.5635 * Math.sin(Math.PI * 0.5 - spoonAngle - assemblyAngle) + 0.60287008 + assembly.position.y;
+                spoon.position.z = 0.5635 * Math.cos(Math.PI * 0.5 - spoonAngle - assemblyAngle) + assembly.position.z;
+    
+                spoon.rotation.x = -(Math.PI * 0.5 - spoonAngle) + assemblyAngle;
+    
+                if (ball.position.y == 0 && ball.position.z == 0 && (mesh == undefined || !mesh.visible)) {
+                    ball.position.y = spoon.position.y + 5 * Math.sin(spoonAngle + assemblyAngle - Math.PI * 0.07);
+                    ball.position.z = spoon.position.z - 5 * Math.cos(spoonAngle + assemblyAngle - Math.PI * 0.07);
+                } */
+            }
         }
+    }
+}
+
+function setPosition(a, s, l) {
+    assembly.rotation.x = a;
+    assembly.position.y = -4.871 * Math.sin(a);
+    assembly.position.z = 4.871 * Math.cos(-a) - 4.871;
+
+    spoonAngleMax = spoonAngleDefaultMax - a;
+
+    straw1.rotation.x = a;
+    straw1.position.z = l * l / 4.871 + 1.3 * assembly.position.z;
+    actualStrawLength = l;
+
+    straw2.rotation.x = straw1.rotation.x;
+    straw2.position.z = straw1.position.z;
+
+    spoon.position.y = 0.5635 * Math.sin(Math.PI * 0.5 - s - a) + 0.60287008 + assembly.position.y;
+    spoon.position.z = 0.5635 * Math.cos(Math.PI * 0.5 - s - a) + assembly.position.z;
+
+    spoon.rotation.x = -(Math.PI * 0.5 - s) + a;
+    actualSpoonAngle = s;
+
+    if (mesh == undefined || !mesh.visible) {
+        ball.position.y = spoon.position.y + 5 * Math.sin(s + a - Math.PI * 0.07);
+        ball.position.z = spoon.position.z - 5 * Math.cos(s + a - Math.PI * 0.07);
+        
+        x = ball.position.z;
+        y = ball.position.y;
     }
 }
 
@@ -413,11 +469,13 @@ function submitInputs() {
     spoonAngle = clip(spoonAngleInput.value * Math.PI / 180, spoonAngleMin, spoonAngleMax);
     spoonAngleInput.value = Math.round(spoonAngle / Math.PI * 180 * 100) / 100;
 
-    ball.position.y = 0;
-    ball.position.z = 0;
     mesh.visible = false;
+    glide = true;
+    positionSet = false;
     setPositions();
+    setPosition(assembly.rotation.x, actualSpoonAngle, actualStrawLength);
 
+    console.log("running");
     var angle = Math.PI - (spoon.rotation.x - Math.PI * 0.2 + Math.PI * 0.16);
 
     while (angle > Math.PI || angle < 0) {
@@ -428,9 +486,6 @@ function submitInputs() {
         }
     }
 
-    x = ball.position.z;
-    y = ball.position.y;
-
     t = 0;
     v0x = velocityInput.value * Math.cos(angle);
     v0y = velocityInput.value * Math.sin(angle);
@@ -438,6 +493,7 @@ function submitInputs() {
     vy = v0y;
     ax = 0;
     ay = -1 * Number(gravityInput.value);
+
 }
 
 function clip(input, limit1, limit2) {
