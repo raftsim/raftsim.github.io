@@ -12,14 +12,19 @@
     <script type="module" src="app.js"></script>
     <div id="form-container">
         <form id="form">
-            Height of straws: <input type="number" value=0 id="strawLength"><br>
-            Angle of spoon: <input type="number" value=0 id="spoonAngle"><br>
-            Starting speed of ball: <input type="number" value=0 id="velocity"><br>
-            Gravity: <input type="number" value=50 id="gravity"><br>
+            Height of straws (in): <input type="number" value=0 id="strawLength"><br>
+            Angle of spoon (degrees): <input type="number" value=0 id="spoonAngle"><br>
+            Starting speed of ball (d/t): <input type="number" value=0 id="velocity"><br>
+            Gravity (g): <input type="number" value=50 id="gravity"><br>
 
             <div id="submit-div">
                 <button type="button" id="submit">Start</button>
             </div>
+
+            <br>
+            <br>
+
+            <span id="distance-text">Distance: <span id="distance">123.45</span></span>
         </form>
     </div>
 </body>

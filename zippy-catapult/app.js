@@ -135,6 +135,7 @@ function init() {
         }
 
         {
+            ball.position.x = -0.07;
             ball.position.y = spoon.position.y;
             ball.position.z = spoon.position.z;
 
@@ -326,7 +327,6 @@ function render() {
             }
         }
     } else if (ball != null && ball.position.y > 0 && positionSet) {
-        console.log("here");
         if (mesh != undefined) {
             mesh.visible = false;
         }
@@ -357,7 +357,11 @@ function render() {
     } else if ((ball != null && ball.position.z > 1) && (mesh != null && !mesh.visible) && positionSet) {
         ball.position.y = 0;
         fontLoader.load('https://unpkg.com/three/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-            var text = "Distance: " + (Math.round((mainPoints[1].z - mainPoints[0].z) * 100) / 100);
+            var num = Math.round((mainPoints[1].z - mainPoints[0].z) * 100) / 100;
+            var text = "Distance: " + num;
+
+            document.getElementById("distance").innerText = num;
+            document.getElementById("distance-text").style.visibility = "visible";
 
             var geometry = new THREE.TextGeometry(text, {
                 font: font,
@@ -374,8 +378,8 @@ function render() {
             mesh.geometry = geometry;
 
             mesh.rotation.x = Math.PI * 1.5;
-            mesh.position.x = -6;
-            mesh.position.z = targetPos.z;
+            mesh.position.x = -5.86;
+            mesh.position.z = targetPos.z + 0.5;
             mesh.visible = true;
         });
     }
@@ -392,8 +396,6 @@ function setPositions() {
                 let a = assembly.rotation.x + Math.round((assemblyAngle - assembly.rotation.x) * glideFactor * 100) / 100;
                 let s = actualSpoonAngle + Math.round((spoonAngle - actualSpoonAngle) * glideFactor * 100) / 100;
                 let l = actualStrawLength + Math.round((strawLength - actualStrawLength) * glideFactor * 100) / 100;
-
-                console.log(Math.abs(assembly.rotation.x - assemblyAngle));
 
                 setPosition(a, s, l);
                 positionSet = false;
@@ -454,6 +456,7 @@ function setPosition(a, s, l) {
 
         x = ball.position.z;
         y = ball.position.y;
+        t = 0;
     }
 }
 
@@ -462,6 +465,7 @@ function submitInputs() {
     var spoonAngleInput = document.getElementById("spoonAngle");
     var velocityInput = document.getElementById("velocity");
     var gravityInput = document.getElementById("gravity");
+    document.getElementById("distance-text").style.visibility = "hidden";
 
     strawLength = clip(strawLengthInput.value, strawMin, strawMax);
     strawLengthInput.value = Math.round(strawLength * 100) / 100;
@@ -472,13 +476,12 @@ function submitInputs() {
     mesh.visible = false;
     glide = true;
     positionSet = false;
-    
+
     velocity = Number(velocityInput.value);
     gravity = Number(gravityInput.value);
 
     setPositions();
     setPosition(assembly.rotation.x, actualSpoonAngle, actualStrawLength);
-
 }
 
 function clip(input, limit1, limit2) {
