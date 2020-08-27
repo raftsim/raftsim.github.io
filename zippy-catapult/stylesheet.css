@@ -1,8 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap');
 
+/* * {
+    border: 1px solid white ;
+} */
+
 body {
     margin: 0;
     font-family: 'Roboto Condensed', sans-serif;
+    background-color: black;
 }
 
 canvas {
@@ -26,6 +31,19 @@ input {
     margin-left: 10px;
     height: 20px;
     width: 100px;
+}
+
+#distance {
+    display: inline-block;
+    margin-left: 10px;
+    height: 20px;
+    width: 105px;
+    text-align: left;
+}
+
+#distance-text {
+    font-size: 22px;
+    visibility: hidden;
 }
 
 #submit {
