@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap');
 
-/* * {
-    border: 1px solid white ;
-} */
-
 body {
     margin: 0;
     font-family: 'Roboto Condensed', sans-serif;
@@ -48,12 +44,10 @@ input {
 
 #submit {
     font-family: 'Roboto Condensed', sans-serif;
-    /* background-color: lightgray; */
     background-color: green;
     border-width: 1px;
     border-radius: 5px;
     border-color: transparent;
-    /* color: black; */
     color: white;
     padding: 3px 8px;
     width: auto;
@@ -70,5 +64,4 @@ input {
     height: auto;
     float: right;
     text-align: center;
-    /* background-color: white; */
 }

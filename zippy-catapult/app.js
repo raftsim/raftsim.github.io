@@ -2,17 +2,11 @@ import * as THREE from 'https://unpkg.com/three/build/three.module.js';
 
 import { OBJLoader } from 'https://unpkg.com/three/examples/jsm/loaders/OBJLoader.js';
 
+import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
+
 var container;
 
-var camera, scene, renderer;
-
-var mouseX = 0, mouseY = 0;
-
-var mouseFactor = 0.4;
-var speedFactor = 0.05;
-
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
+var camera, scene, renderer, controls;
 
 var assembly;
 var spoon;
@@ -25,22 +19,15 @@ let spoonAngleDefaultMax = Math.PI * 0.5;
 var spoonAngleMax = spoonAngleDefaultMax;
 var spoonAngle = spoonAngleMax / 2;
 var actualSpoonAngle;
-let spoonAngleFactor = 0.01;
-var spoonUpward = true;
 
 let strawMin = 0;
 let strawMax = 4 - (0.03937008 + 0.5635 + 0.5635);
 var strawLength = strawMax / 2;
 var actualStrawLength;
-let strawFactor = 0.01;
-var strawUpward = true;
 
-let movement = false;
 var glide = false;
 let glideFactor = 0.05;
 var positionSet = true;
-
-let fixedCamera = false;
 
 var velocity = 0;
 var gravity = 50;
@@ -74,6 +61,11 @@ var mainLine;
 var fontLoader = new THREE.FontLoader();
 var mesh;
 
+let strawLengthInput = document.getElementById("strawLength");
+let spoonAngleInput = document.getElementById("spoonAngle");
+let velocityInput = document.getElementById("velocity");
+let gravityInput = document.getElementById("gravity");
+
 init();
 animate();
 
@@ -90,11 +82,6 @@ function init() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = 20;
     camera.position.y = 2;
-    if (fixedCamera) {
-        camera.position.x = -15;
-        camera.position.y = 20;
-        camera.position.z = -0.25;
-    }
 
     // scene
 
@@ -211,31 +198,31 @@ function init() {
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('assembly.obj', function (obj) {
+        loader.load('objects/assembly.obj', function (obj) {
 
             assembly = obj;
 
         }, onProgress, onError);
 
-        loader.load('spoon.obj', function (obj) {
+        loader.load('objects/spoon.obj', function (obj) {
 
             spoon = obj;
 
         }, onProgress, onError);
 
-        loader.load('straw.obj', function (obj) {
+        loader.load('objects/straw.obj', function (obj) {
 
             straw1 = obj;
 
         }, onProgress, onError);
 
-        loader.load('straw.obj', function (obj) {
+        loader.load('objects/straw.obj', function (obj) {
 
             straw2 = obj;
 
         }, onProgress, onError);
 
-        loader.load('ball.obj', function (obj) {
+        loader.load('objects/ball.obj', function (obj) {
 
             ball = obj;
 
@@ -249,18 +236,22 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
-    document.addEventListener('mousemove', onDocumentMouseMove, false);
+    // orbit controls
+
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0, 0);
+    controls.update();
+    controls.enablePan = false;
+    controls.enableDamping = true;
 
     //
 
     window.addEventListener('resize', onWindowResize, false);
 
+    sendValues();
 }
 
 function onWindowResize() {
-
-    windowHalfX = window.innerWidth / 2;
-    windowHalfY = window.innerHeight / 2;
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -269,64 +260,25 @@ function onWindowResize() {
 
 }
 
-function onDocumentMouseMove(event) {
-
-    mouseX = (event.clientX - windowHalfX) / 2;
-    mouseY = (event.clientY - windowHalfY) / 2;
-
-}
-
 //
 
 function animate() {
 
     requestAnimationFrame(animate);
+    controls.update();
     render();
 
 }
 
 function render() {
 
-    if (!fixedCamera) {
-        camera.position.x += (mouseX * mouseFactor - camera.position.x) * speedFactor;
-        camera.position.y += (- mouseY * mouseFactor - camera.position.y) * speedFactor;
-    }
-
     if (ball != null) {
         targetPos.z = (scene.position.z + ball.position.z) / 2;
     }
 
-    camera.lookAt(targetPos);
+    controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    if (movement) {
-        {
-            if (strawLength <= strawMin) {
-                strawUpward = true;
-            } else if (strawLength >= strawMax) {
-                strawUpward = false;
-            }
-
-            if (strawUpward) {
-                strawLength += strawFactor
-            } else {
-                strawLength -= strawFactor
-            }
-        }
-
-        {
-            if (spoonAngle <= spoonAngleMin) {
-                spoonUpward = true;
-            } else if (spoonAngle >= spoonAngleMax) {
-                spoonUpward = false;
-            }
-
-            if (spoonUpward) {
-                spoonAngle += spoonAngleFactor
-            } else {
-                spoonAngle -= spoonAngleFactor
-            }
-        }
-    } else if (ball != null && ball.position.y > 0 && positionSet) {
+    if (ball != null && ball.position.y > 0 && positionSet) {
         if (mesh != undefined) {
             mesh.visible = false;
         }
@@ -461,17 +413,12 @@ function setPosition(a, s, l) {
 }
 
 function submitInputs() {
-    var strawLengthInput = document.getElementById("strawLength");
-    var spoonAngleInput = document.getElementById("spoonAngle");
-    var velocityInput = document.getElementById("velocity");
-    var gravityInput = document.getElementById("gravity");
     document.getElementById("distance-text").style.visibility = "hidden";
 
     strawLength = clip(strawLengthInput.value, strawMin, strawMax);
-    strawLengthInput.value = Math.round(strawLength * 100) / 100;
-
     spoonAngle = clip(spoonAngleInput.value * Math.PI / 180, spoonAngleMin, spoonAngleMax);
-    spoonAngleInput.value = Math.round(spoonAngle / Math.PI * 180 * 100) / 100;
+
+    sendValues();
 
     mesh.visible = false;
     glide = true;
@@ -492,4 +439,9 @@ function clip(input, limit1, limit2) {
     } else {
         return input;
     }
+}
+
+function sendValues() {
+    strawLengthInput.value = Math.round(strawLength * 100) / 100;
+    spoonAngleInput.value = Math.round(spoonAngle / Math.PI * 180 * 100) / 100;
 }
