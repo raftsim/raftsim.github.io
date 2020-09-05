@@ -19,17 +19,12 @@ let spoonAngleDefaultMax = Math.PI * 0.5;
 var spoonAngleMax = spoonAngleDefaultMax;
 var spoonAngle = spoonAngleMax / 2;
 var actualSpoonAngle;
-let spoonAngleFactor = 0.01;
-var spoonUpward = true;
 
 let strawMin = 0;
 let strawMax = 4 - (0.03937008 + 0.5635 + 0.5635);
 var strawLength = strawMax / 2;
 var actualStrawLength;
-let strawFactor = 0.01;
-var strawUpward = true;
 
-let movement = false;
 var glide = false;
 let glideFactor = 0.05;
 var positionSet = true;
@@ -203,31 +198,31 @@ function init() {
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('assembly.obj', function (obj) {
+        loader.load('objects/assembly.obj', function (obj) {
 
             assembly = obj;
 
         }, onProgress, onError);
 
-        loader.load('spoon.obj', function (obj) {
+        loader.load('objects/spoon.obj', function (obj) {
 
             spoon = obj;
 
         }, onProgress, onError);
 
-        loader.load('straw.obj', function (obj) {
+        loader.load('objects/straw.obj', function (obj) {
 
             straw1 = obj;
 
         }, onProgress, onError);
 
-        loader.load('straw.obj', function (obj) {
+        loader.load('objects/straw.obj', function (obj) {
 
             straw2 = obj;
 
         }, onProgress, onError);
 
-        loader.load('ball.obj', function (obj) {
+        loader.load('objects/ball.obj', function (obj) {
 
             ball = obj;
 
@@ -248,8 +243,6 @@ function init() {
     controls.update();
     controls.enablePan = false;
     controls.enableDamping = true;
-
-    // document.addEventListener('mousemove', onDocumentMouseMove, false);
 
     //
 

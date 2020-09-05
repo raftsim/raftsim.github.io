@@ -6,17 +6,7 @@ var container;
 
 var camera, scene, renderer;
 
-var mouseX = 0, mouseY = 0;
-
-var mouseFactor = 0.4;
-var speedFactor = 0.05;
-
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
-
 var assembly;
-
-let fixedCamera = false;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -33,12 +23,7 @@ function init() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = 20;
     camera.position.y = 2;
-    if (fixedCamera) {
-        camera.position.x = -15;
-        camera.position.y = 20;
-        camera.position.z = -0.25;
-    }
-
+    
     // scene
 
     scene = new THREE.Scene();
@@ -84,7 +69,7 @@ function init() {
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('assembly.obj', function (obj) { // EXAMPLE CODE
+        loader.load('objects/assembly.obj', function (obj) { // EXAMPLE CODE
           
             assembly = obj;
 
@@ -113,9 +98,6 @@ function init() {
 }
 
 function onWindowResize() {
-
-    windowHalfX = window.innerWidth / 2;
-    windowHalfY = window.innerHeight / 2;
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
