@@ -24,7 +24,7 @@ function init() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = 20;
     camera.position.y = 2;
-    
+
     // scene
 
     scene = new THREE.Scene();
@@ -40,7 +40,7 @@ function init() {
 
     function loadModel() {
 
-        scene.add(assembly); // EXAMPLE CODE
+        scene.add(assembly);
 
     }
 
@@ -71,7 +71,7 @@ function init() {
         var loader = new OBJLoader(manager);
 
         loader.load('objects/assembly.obj', function (obj) { // EXAMPLE CODE
-          
+
             assembly = obj;
 
         }, onProgress, onError);
@@ -96,6 +96,7 @@ function init() {
 
     window.addEventListener('resize', onWindowResize, false);
 
+    sendValues();
 }
 
 function onWindowResize() {
@@ -118,22 +119,9 @@ function animate() {
 }
 
 function render() {
-    
-    // TODO: Change camera target here
-    
-    controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    // TODO: change object positions, rotations, states, etc here
+    controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
     renderer.render(scene, camera);
 }
 
-function clip(input, limit1, limit2) {
-    if (input < limit1) {
-        return limit1;
-    } else if (input > limit2) {
-        return limit2;
-    } else {
-        return input;
-    }
-}
