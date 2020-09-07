@@ -12,6 +12,21 @@ var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
+var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+var linePoints = [];
+var line;
+
+var angle = 0;
+let angleIncrease = 0.2;
+
+var radius = 1;
+
+let radiusInput = document.getElementById("radius");
+let rotationInput = document.getElementById("rotation");
+
+var volume = 0;
+let volumeFactor = 100
+
 init();
 animate();
 
@@ -21,10 +36,13 @@ function init() {
     container.id = "container";
     document.body.appendChild(container);
 
+    var submitInputsButton = document.getElementById("submit");
+    submitInputsButton.onclick = submitInputs;
+
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = 20;
     camera.position.y = 2;
-    
+
     // scene
 
     scene = new THREE.Scene();
@@ -40,9 +58,17 @@ function init() {
 
     function loadModel() {
 
-        scene.add(assembly); // EXAMPLE CODE
+        scene.add(assembly);
+        assembly.position.x = -3.078;
+        assembly.position.z = -1.169;
 
     }
+
+    linePoints.push(new THREE.Vector3(0, 0, 0));
+    linePoints.push(new THREE.Vector3(radius, 0, 0));
+    var geometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+    line = new THREE.Line(geometry, material);
+    scene.add(line);
 
     var manager = new THREE.LoadingManager(loadModel);
 
@@ -71,7 +97,7 @@ function init() {
         var loader = new OBJLoader(manager);
 
         loader.load('objects/assembly.obj', function (obj) { // EXAMPLE CODE
-          
+
             assembly = obj;
 
         }, onProgress, onError);
@@ -96,6 +122,7 @@ function init() {
 
     window.addEventListener('resize', onWindowResize, false);
 
+    sendValues();
 }
 
 function onWindowResize() {
@@ -118,22 +145,57 @@ function animate() {
 }
 
 function render() {
-    
-    // TODO: Change camera target here
-    
+
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    // TODO: change object positions, rotations, states, etc here
+    angle += angleIncrease;
+
+    setPosition(radius, angle);
+
+    volumeFactor = 200;
+
+    volume = Math.round((radius ** 0.25) * ((angleIncrease * 2) ** 2.5) * volumeFactor * 10) / 10;
+
+    document.getElementById("volume").innerText = volume;
 
     renderer.render(scene, camera);
 }
 
-function clip(input, limit1, limit2) {
-    if (input < limit1) {
-        return limit1;
-    } else if (input > limit2) {
-        return limit2;
+function setPosition(r, angle) {
+    var a = 3.078 + r;
+    var b = 1.169;
+    var c = Math.sqrt(Math.pow(b, 2) + Math.pow(a, 2));
+
+    var angleBoost = Math.atan(b / a);
+
+    assembly.position.x = Math.cos(angle - angleBoost) * (c)
+    assembly.position.z = Math.sin(angle - angleBoost) * (c);
+    assembly.rotation.y = -angle;
+
+    linePoints[1].x = Math.cos(angle) * radius;
+    linePoints[1].z = Math.sin(angle) * radius;
+    line.geometry.setFromPoints(linePoints);
+}
+
+function submitInputs() {
+    radius = clip(Number(radiusInput.value), 0);
+    angleIncrease = clip(rotationInput.value * Math.PI / 180, 0);
+
+    setPosition(radius, angle);
+    sendValues();
+    console.log(radius);
+    console.log(angleIncrease);
+}
+
+function clip(input, limit) {
+    if (input < limit) {
+        return limit;
     } else {
         return input;
     }
+}
+
+function sendValues() {
+    radiusInput.value = Math.round(radius * 100) / 100;
+    rotationInput.value = Math.round(angleIncrease / Math.PI * 180 * 100) / 100;
 }
