@@ -42,9 +42,9 @@ function init() {
 
     loader.load('objects/assembly.stl', function (geometry) {
 
-        var mesh = new THREE.Mesh(geometry, material);
+        assembly = new THREE.Mesh(geometry, material);
 
-        scene.add(mesh);
+        scene.add(assembly);
 
     });
 
