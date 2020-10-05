@@ -4,13 +4,19 @@ import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoade
 
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
-var container;
+var container; //HTML Element
 
 var camera, scene, renderer, controls;
+//Camera = User's viewpoint
+//scene = everything that is visible
+//renderer = renders the scen
+//Control = contains mouse control
 
-var assembly;
+var body, bottom;
+//Body, bottom = two parts of rocket
 
 let targetPos = new THREE.Vector3(0, 0, 0);
+//Position camera is looking at
 
 init();
 animate();
@@ -40,11 +46,21 @@ function init() {
 
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-    loader.load('objects/assembly.stl', function (geometry) {
+    loader.load('objects/rocket-body.stl', function (geometry) {
 
-        var mesh = new THREE.Mesh(geometry, material);
+        body = new THREE.Mesh(geometry, material);
 
-        scene.add(mesh);
+        scene.add(body);
+
+    });
+
+    loader.load('objects/rocket-bottom-cap.stl', function (geometry) {
+
+        bottom = new THREE.Mesh(geometry, material);
+        
+        bottom.position.z = 100;
+
+        scene.add(bottom);
 
     });
 
