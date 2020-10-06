@@ -67,8 +67,9 @@ function init() {
 
     function onError() { }
 
-    {
+    { //curly braces help denote blocks of code. removing them allows code to still function
         var loader = new OBJLoader(manager);
+        //load all .obj files from CAD models here
 
         loader.load('objects/assembly.obj', function (obj) { // EXAMPLE CODE
           
@@ -118,6 +119,8 @@ function animate() {
 }
 
 function render() {
+    //START SPECIFICALLY CODING 
+    
     
     // TODO: Change camera target here
     
