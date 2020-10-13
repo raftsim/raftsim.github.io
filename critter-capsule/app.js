@@ -4,11 +4,13 @@ import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoade
 
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
+import * as OIMO from "js/oimo.min.js";
+
 var container;
 
 var camera, scene, renderer, controls;
 
-var assembly;
+var ball, capsule, plate;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -40,11 +42,25 @@ function init() {
 
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-    loader.load('objects/assembly.stl', function (geometry) {
+    loader.load('objects/ball.stl', function (geometry) {
 
-        assembly = new THREE.Mesh(geometry, material);
+        ball = new THREE.Mesh(geometry, material);
 
-        scene.add(assembly);
+        scene.add(ball);
+
+    });
+    loader.load('objects/capsule.stl', function (geometry) {
+
+        capsule = new THREE.Mesh(geometry, material);
+
+        scene.add(capsule);
+
+    });
+    loader.load('objects/plate.stl', function (geometry) {
+
+        plate = new THREE.Mesh(geometry, material);
+
+        scene.add(plate);
 
     });
 
