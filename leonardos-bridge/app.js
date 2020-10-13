@@ -8,7 +8,7 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var assembly;
+var templateStick, sticks;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -22,8 +22,9 @@ function init() {
     document.body.appendChild(container);
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 20;
-    camera.position.y = 2;
+    camera.position.z = 200;
+    camera.position.y = 200;
+    camera.position.x = 200;
     
     // scene
 
@@ -40,7 +41,10 @@ function init() {
 
     function loadModel() {
 
-        scene.add(assembly); // EXAMPLE CODE
+        scene.add(templateStick);
+        sticks = [];
+        createSticks();
+        scene.add(sticks[1]);
 
     }
 
@@ -70,9 +74,9 @@ function init() {
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('objects/assembly.obj', function (obj) { // EXAMPLE CODE
+        loader.load('objects/stick.obj', function (obj) { // EXAMPLE CODE
           
-            assembly = obj;
+            templateStick = obj;
 
         }, onProgress, onError);
     }
@@ -108,6 +112,25 @@ function onWindowResize() {
 }
 
 //
+function createSticks() {
+
+    for (var i = 0; i < sticks.length; i++) {
+        scene.remove(sticks[i]);
+    }
+
+    sticks = [];
+
+    for (var i = 0; i < 15; i++) {
+        var newStick = templateStick.clone(true);
+        newStick.position.x = 50 * (i + 1);
+
+        sticks.push(newStick);
+        console.log(sticks[i].position.x);
+        scene.add(sticks[i]);
+    }
+    console.log(sticks.length);
+    console.log(""+camera.position.x + camera.position.y + camera.position.z)
+}
 
 function animate() {
 
