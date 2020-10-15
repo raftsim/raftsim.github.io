@@ -18,6 +18,8 @@ var body, bottom;
 let targetPos = new THREE.Vector3(0, 0, 0);
 //Position camera is looking at
 
+let gravtity = -9.8;
+
 init();
 animate();
 
@@ -113,6 +115,8 @@ function render() {
     // TODO: change object positions, rotations, states, etc here
 
     renderer.render(scene, camera);
+
+
 }
 
 function clip(input, limit1, limit2) {
@@ -123,4 +127,8 @@ function clip(input, limit1, limit2) {
     } else {
         return input;
     }
+}
+
+function chemicalReaction() {
+    
 }
