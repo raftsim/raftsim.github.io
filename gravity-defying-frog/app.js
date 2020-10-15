@@ -8,7 +8,7 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var assembly;
+var base, frog;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -40,11 +40,22 @@ function init() {
 
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-    loader.load('objects/assembly.stl', function (geometry) {
+    loader.load('objects/base.stl', function (geometry) {
 
-        var mesh = new THREE.Mesh(geometry, material);
+        base = new THREE.Mesh(geometry, material);
+        base.position.x = 6;
+        base.position.y = 18;
+        base.position.z = -55;
 
-        scene.add(mesh);
+        scene.add(base);
+
+    });
+
+    loader.load('objects/frog.stl', function (geometry) {
+        
+        frog = new THREE.Mesh(geometry, material);
+
+        scene.add(frog);
 
     });
 
