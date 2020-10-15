@@ -115,8 +115,6 @@ function render() {
     // TODO: change object positions, rotations, states, etc here
 
     renderer.render(scene, camera);
-
-
 }
 
 function clip(input, limit1, limit2) {
