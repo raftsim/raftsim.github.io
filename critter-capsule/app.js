@@ -4,13 +4,15 @@ import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoade
 
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
-import * as OIMO from "js/oimo.min.js";
-
 var container;
 
 var camera, scene, renderer, controls;
 
 var ball, capsule, plate;
+
+var world, cam;
+
+var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -18,14 +20,14 @@ init();
 animate();
 
 function init() {
-
+    //setup three
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 20;
-    camera.position.y = 2;
+    camera = new THREE.PerspectiveCamera(315, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.z = 300;
+    camera.position.y = 300;
 
     // scene
 
@@ -41,28 +43,35 @@ function init() {
     var loader = new STLLoader();
 
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    
+    //oimo
+    cam = (0, 20, 40);
+    world = new OIMO.World({
+        timestep: 1/60,
+        iterations: 8,
+        broadphase: 3,
+        worldscale: 1,
+        random: true,
+        info: false,
+        gravity: [0, -9.8, 0]
 
-    loader.load('objects/ball.stl', function (geometry) {
-
+    });
+    //place objects
+    loader.load('objects/ball.stl', function(geometry){
         ball = new THREE.Mesh(geometry, material);
-
-        scene.add(ball);
-
+        ball.position.set(0, 0, 100);
+        world.add(ball);
     });
-    loader.load('objects/capsule.stl', function (geometry) {
-
+    loader.load('objects/capsule.stl', function(geometry){
         capsule = new THREE.Mesh(geometry, material);
-
-        scene.add(capsule);
-
+        capsule.position.set(0, 0, 100);
+        world.add(capsule);
     });
-    loader.load('objects/plate.stl', function (geometry) {
-
+    loader.load('objects/plate.stl', function(geometry){
         plate = new THREE.Mesh(geometry, material);
-
-        scene.add(plate);
-
+        world.add(plate);    
     });
+    
 
     //
 
@@ -82,6 +91,9 @@ function init() {
     //
 
     window.addEventListener('resize', onWindowResize, false);
+    world.play()
+    
+
 
 }
 
@@ -97,7 +109,7 @@ function onWindowResize() {
 //
 
 function animate() {
-
+    
     requestAnimationFrame(animate);
     controls.update();
     render();
