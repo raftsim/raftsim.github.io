@@ -12,16 +12,16 @@ var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
-var input1, input2;
-
 let input1Min = 0;
-let input1Max = 99;
-
-let input2Min = 100;
-let input2Max = 199;
 
 let input1Input = document.getElementById("input1");
-let input2Input = document.getElementById("input2");
+
+var x = 0;
+var move = false;
+let xReduction = 0.001;
+
+let radius = 84.5;
+let circumference = 2 * Math.PI * radius;
 
 init();
 animate();
@@ -31,14 +31,14 @@ function init() {
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
-    
+
     var submitInputsButton = document.getElementById("submit");
     submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.x = 200;
-    camera.position.y = 200;
-    camera.position.z = 200;
+    camera.position.x = 800;
+    camera.position.y = 800;
+    camera.position.z = 800;
 
     // scene
 
@@ -109,16 +109,38 @@ function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    // TODO: change object positions, rotations, states, etc here
+    x -= xReduction;
+
+    assembly.position.x = getPosition(x);
+    setRotation();
+
+    if (move && assembly.position.x == 0) {
+        document.getElementById("output").innerText = 0;
+        document.getElementById("output-text").style.visibility = "visible";
+    }
 
     renderer.render(scene, camera);
 }
 
-function clip(input, limit1, limit2) {
+function getPosition(x) {
+    let xFactor = 80 / 3;
+
+    // x = 2 * x - 1;
+    x *= Math.PI;
+
+    x = clip(x, 0);
+ 
+    // return xFactor * (((0.7 * x) ** 1.2) * Math.sin(x));
+    return xFactor * (-x * Math.sin(2 * x));
+}
+
+function setRotation() {
+    assembly.rotation.z = - (assembly.position.x % circumference) / (4 * Math.PI);
+}
+
+function clip(input, limit1) {
     if (input < limit1) {
         return limit1;
-    } else if (input > limit2) {
-        return limit2;
     } else {
         return input;
     }
@@ -127,13 +149,12 @@ function clip(input, limit1, limit2) {
 function submitInputs() {
     document.getElementById("output-text").style.visibility = "hidden";
 
-    input1 = clip(input1Input.value, input1Min, input1Max);
-    input2 = clip(input2Input.value, input2Min, input2Max);
+    x = clip(input1Input.value, input1Min) % 5;
+    move = true;
 
     sendValues();
 }
 
 function sendValues() {
-    input1Input.value = Math.round(input1 * 100) / 100;
-    input2Input.value = Math.round(input2 * 100) / 100;
+    input1Input.value = Math.round(x * 100) / 100;
 }

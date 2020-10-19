@@ -344,6 +344,8 @@ function setPositions() {
                 let a = assembly.rotation.x + Math.round((assemblyAngle - assembly.rotation.x) * glideFactor * 100) / 100;
                 let s = actualSpoonAngle + Math.round((spoonAngle - actualSpoonAngle) * glideFactor * 100) / 100;
                 let l = actualStrawLength + Math.round((strawLength - actualStrawLength) * glideFactor * 100) / 100;
+                
+                let l = actualStrawLength + Math.round((strawLength - actualStrawLength) * glideFactor * 100) / 100;
 
                 setPosition(a, s, l);
                 positionSet = false;
