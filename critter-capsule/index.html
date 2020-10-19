@@ -2,14 +2,34 @@
 <html lang="en">
 
 <head>
-    <title>raft Kit Simulations - Critter Capsule</title>
+    <title>Critter Capsule</title>
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <style>
+        html, body{
+            overflow:hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #renderCanvas{
+            width:100%;
+            height:100%;
+            touch-action:none;
+        }
+    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 
 <body>
-    <script src="js/oimo.min.js"></script>
+    <canvas id="renderCanvas" touch-action="none"></canvas>
+
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>    
+    <script src="https://cdn.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylon.stlFileLoader.js"></script>
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 
