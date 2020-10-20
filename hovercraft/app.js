@@ -41,7 +41,7 @@ function init() {
     function loadModel() {
 
         scene.add(balloon);
-        // scene.add(base);
+        scene.add(base);
 console.log("hello")
     }
 
@@ -77,11 +77,11 @@ console.log("hello")
 
         }, onProgress, onError);
         
-        /* loader.load('objects/base.obj', function (obj) { 
+         loader.load('objects/base.obj', function (obj) { 
           
             base = obj;
 
-        }, onProgress, onError); */
+        }, onProgress, onError);
     }
 
     //
