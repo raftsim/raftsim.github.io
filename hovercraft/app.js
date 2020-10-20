@@ -14,7 +14,6 @@ let targetPos = new THREE.Vector3(0, 0, 0);
 
 init();
 animate();
-
 function init() {
 
     container = document.createElement('div');
