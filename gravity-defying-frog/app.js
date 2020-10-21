@@ -44,7 +44,7 @@ function init() {
 
         base = new THREE.Mesh(geometry, material);
         base.position.x = 6;
-        base.position.y = 18;
+        base.position.y = -10;
         base.position.z = -55;
 
         scene.add(base);
@@ -56,7 +56,7 @@ function init() {
         frog = new THREE.Mesh(geometry, material);
 
         scene.add(frog);
-
+`   `
     });
 
     //
