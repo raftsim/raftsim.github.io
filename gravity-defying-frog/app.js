@@ -10,7 +10,16 @@ var camera, scene, renderer, controls;
 
 var base, frog;
 
+var rightHand, leftHand, rightLeg, leftLeg;
+
 let targetPos = new THREE.Vector3(0, 0, 0);
+
+let tfRightHand = document.getElementById("rightHand");
+let tfLeftHand = document.getElementById("leftHand");
+let tfRightLeg = document.getElementById("rightLeg");
+let tfLeftLeg = document.getElementById("leftLeg");
+
+let btSubmit = document.getElementById("submit");
 
 init();
 animate();
@@ -20,6 +29,8 @@ function init() {
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
+
+    btSubmit.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = 20;
@@ -54,7 +65,7 @@ function init() {
     loader.load('objects/frog.stl', function (geometry) {
         
         frog = new THREE.Mesh(geometry, material);
-
+        // resetFrog();
         scene.add(frog);
 `   `
     });
@@ -110,6 +121,18 @@ function render() {
     renderer.render(scene, camera);
 }
 
+
+function resetFrog() {
+
+}
+
+
+
+
+
+
+
+
 function clip(input, limit1, limit2) {
     if (input < limit1) {
         return limit1;
@@ -118,4 +141,13 @@ function clip(input, limit1, limit2) {
     } else {
         return input;
     }
+}
+
+
+
+function submitInputs() {
+    rightHand = Math.round(tfRightHand.value);
+    leftHand = Math.round(tfLeftHand.value);
+    rightLeg = Math.round(tfRightLeg.value);
+    leftLeg = Math.round(tfLeftLeg.value);
 }
