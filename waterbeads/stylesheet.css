@@ -4,8 +4,84 @@ body {
     margin: 0;
     font-family: 'Roboto Condensed', sans-serif;
     background-color: black;
+    color: white;
 }
 
 canvas {
     display: block;
+}
+
+#form-container {
+    margin: 20px;
+    float: left;
+}
+
+form {
+    font-size: 20px;
+    text-align: right;
+    position: absolute;
+}
+
+input {
+    font-size: 18px;
+    margin-left: 10px;
+    height: 20px;
+    width: 100px;
+}
+
+#distance {
+    display: inline-block;
+    margin-left: 10px;
+    height: 20px;
+    width: 105px;
+    text-align: left;
+}
+
+#distance-text {
+    font-size: 22px;
+    visibility: hidden;
+}
+
+#submit {
+    font-family: 'Roboto Condensed', sans-serif;
+    background-color: green;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: transparent;
+    color: white;
+    padding: 3px 8px;
+    width: auto;
+    height: auto;
+    text-align: center;
+    text-decoration: none;
+    font-size: 15px;
+    margin: 8px 0px 0px 0px;
+    cursor: pointer;
+}
+
+#submit-div {
+    width: 106px;
+    height: auto;
+    float: right;
+    text-align: center;
+}
+
+#timer-txt {
+    position: absolute;
+    left: 50%;
+    margin-left: -34px;
+    margin-top: 25px;
+    color: white;
+}
+#data {
+    font-size: 20px;
+    margin: 20px;
+    position: absolute;
+    right: 0px;
+}
+
+table, th, tr, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    padding: 7px;
 }
