@@ -1,4 +1,5 @@
 init();
+var ball, plate, capsule;
 function init() {
 
     var canvas = document.getElementById("renderCanvas");
@@ -20,36 +21,82 @@ function init() {
     scene.enablePhysics(gravityVector, physicsPlugin);
     const physEngine = scene.getPhysicsEngine();
     physEngine.setSubTimeStep(1000 / 60);
+    const physicsRoot = new BABYLON.Mesh("physicsRoot");
 
-    var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
+    var assetsManager = new BABYLON.AssetsManager(scene);
+
+    var ground = BABYLON.Mesh.CreateGround("ground1", 100, 100, -10, scene);
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 }, scene);
 
-    BABYLON.SceneLoader.ImportMesh("", "./objects/", "plate.stl", scene, function (meshes) {
-        /* var physicsRoot = new BABYLON.Mesh("", scene);
-        physicsRoot.addChild(meshes[0]); */
-        meshes[0].physicsImpostor = new BABYLON.PhysicsImpostor(meshes[0], BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene);
+    plate = assetsManager.addMeshTask("plate task", "", "./objects/", "plate.stl");
+    plate.onSuccess = function(task){
+        //task.loadedMeshes[0].position = BABYLON.Vector3.Zero();
+        plate.physicsImpostor = new BABYLON.PhysicsImpostor(plate, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene); 
+    }
+    plate.onError = function(task, message, exception){
+        console.log(message, exception);
+    }
+
+    ball = assetsManager.addMeshTask("ball task", "", "./objects/", "ball.stl");
+    ball.onSuccess = function(task){
+        //task.loadedMeshes[0].position = BABYLON.Vector3.Zero();
+        ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene); 
+    }
+    ball.onError = function(task, message, exception){
+        console.log(message, exception);
+    }
+
+
+    capsule = assetsManager.addMeshTask("capsule task", "", "./objects/", "capsule.stl");
+    capsule.onSuccess = function(task){
+        //task.loadedMeshes[0].position = BABYLON.Vector3.Zero();
+        capsule.physicsImpostor = new BABYLON.PhysicsImpostor(capsule, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene); 
+    }
+    capsule.onError = function(task, message, exception){
+        console.log(message, exception);
+    }
+
+
+    
+
+    /*BABYLON.SceneLoader.ImportMeshAsync("plate", "./objects/", "plate.stl", scene, function (meshes) {
+        
     });
     
 
-    BABYLON.SceneLoader.ImportMesh("", "./objects/", "ball.stl", scene, function (meshes) {
-        /* var physicsRoot = new BABYLON.Mesh("", scene);
-        physicsRoot.addChild(meshes[0]); */
-        meshes[0].physicsImpostor = new BABYLON.PhysicsImpostor(meshes[0], BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene);
+    BABYLON.SceneLoader.ImportMeshAsync("ball", "./objects/", "ball.stl", scene, function (meshes) {
+        
     });
 
-    BABYLON.SceneLoader.ImportMesh("", "./objects/", "capsule.stl", scene, function (meshes) {
-        /* var physicsRoot = new BABYLON.Mesh("", scene);
-        physicsRoot.addChild(meshes[0]); */
-        meshes[0].physicsImpostor = new BABYLON.PhysicsImpostor(meshes[0], BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene);
-    });
+    BABYLON.SceneLoader.ImportMeshAsync("capsule", "./objects/", "capsule.stl", scene, function (meshes) {
+        
+    });*/
 
-    engine.runRenderLoop(function () {
-        scene.render();
-    });
+    
+    
+    
+
+    
+    
+    capsule.parent = physicsRoot;
+    ball.parent = physicsRoot;
+    plate.parent = physicsRoot;  
+
+
+    assetsManager.onFinish = function(tasks){
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+    }
+
+    assetsManager.load();
+
 
     window.addEventListener("resize", function () {
         engine.resize();
     });
+
+    
 
 }
 
