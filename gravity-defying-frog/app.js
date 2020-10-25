@@ -59,15 +59,13 @@ function init() {
         base.position.z = -55;
 
         scene.add(base);
-
     });
 
     loader.load('objects/frog.stl', function (geometry) {
         
         frog = new THREE.Mesh(geometry, material);
-        // resetFrog();
+        resetFrog();
         scene.add(frog);
-`   `
     });
 
     //
@@ -123,11 +121,69 @@ function render() {
 
 
 function resetFrog() {
+    frog.rotation.z = 0;
+    frog.rotation.y = 0;
+    frog.rotation.x = 0.68;
+}
 
+function onLeftHand() {
+    frog.rotation.z = clipZ(frog.rotation.z + 0.3);
+    frog.rotation.y = clipY(frog.rotation.y - 0.1);
+    frog.rotation.x = clipX(frog.rotation.x - 0.113);
+}
+
+function onRightHand() {
+    frog.rotation.z = clipZ(frog.rotation.z - 0.3);
+    frog.rotation.y = clipY(frog.rotation.y + 0.1);
+    frog.rotation.x = clipX(frog.rotation.x - 0.113);
+}
+
+function onLeftLeg() {
+    frog.rotation.z = clipZ(frog.rotation.z + 0.3);
+    frog.rotation.y = clipY(frog.rotation.y - 0.3);
+    frog.rotation.x = clipX(frog.rotation.x + 0.68);
+}
+
+function onRightLeg() {
+    frog.rotation.z = clipZ(frog.rotation.z + 0.3);
+    frog.rotation.y = clipY(frog.rotation.y + 0.3);
+    frog.rotation.x = clipX(frog.rotation.x + 0.68);
 }
 
 
 
+
+
+
+function clipX(xRotation) {
+    if (xRotation < 0.69 && xRotation > -0.69){
+        return xRotation;
+    }
+    if (xRotation < 0){
+        return -0.69;
+    }
+    return 0.69;
+}
+
+function clipY(yRotation){
+    if (yRotation < 0.95 && yRotation > -0.95){
+        return yRotation;
+    }
+    if (yRotation < 0){
+        return -0.95;
+    }
+    return 0.95;
+}
+
+function clipZ(zRotation) {
+    if (zRotation < 1 && zRotation > -1){
+        return zRotation;
+    }
+    if (zRotation < 0) {
+        return -1;
+    }
+    return 1;
+}
 
 
 
