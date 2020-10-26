@@ -10,7 +10,11 @@ var camera, scene, renderer, controls;
 
 var balloon, base;
 
+var pressure = 0;
+
 let targetPos = new THREE.Vector3(0, 0, 0);
+let pressureInput = document.getElementById("pressure");
+
 
 init();
 animate();
