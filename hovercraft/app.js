@@ -40,6 +40,7 @@ function init() {
     function loadModel() {
 
         scene.add(balloon);
+        balloon.scale.z = Math.PI / 4;
         scene.add(base);
 console.log("hello")
     }
