@@ -10,10 +10,19 @@ var camera, scene, renderer, controls;
 
 var balloon, base;
 
-var pressure = 0;
+var input1;
+
+var t = 0;
+
+var angle = 0;
+var speed = 0;
+
+let input1Min = 0
+let threshold = 100
+
 
 let targetPos = new THREE.Vector3(0, 0, 0);
-let pressureInput = document.getElementById("pressure");
+let input1Input = document.getElementById("input1");
 
 
 init();
@@ -24,10 +33,13 @@ function init() {
     container.id = "container";
     document.body.appendChild(container);
 
+    var submitInputsButton = document.getElementById("submit");
+    submitInputsButton.onclick = submitInputs;
+
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 20;
-    camera.position.y = 2;
-    
+    camera.position.z = 500;
+    camera.position.y = 500;
+
     // scene
 
     scene = new THREE.Scene();
@@ -39,13 +51,19 @@ function init() {
     camera.add(pointLight);
     scene.add(camera);
 
+
+    var geometry = new THREE.PlaneGeometry(1000, 1000);
+    var material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+    var plane = new THREE.Mesh(geometry, material);
+    scene.add(plane);
+    plane.rotation.x = Math.PI / 2;
+
     // manager
 
     function loadModel() {
 
         scene.add(balloon);
         scene.add(base);
-console.log("hello")
     }
 
     var manager = new THREE.LoadingManager(loadModel);
@@ -74,14 +92,14 @@ console.log("hello")
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('objects/balloon.obj', function (obj) { 
-          
+        loader.load('objects/balloon.obj', function (obj) {
+
             balloon = obj;
 
         }, onProgress, onError);
-        
-         loader.load('objects/base.obj', function (obj) { 
-          
+
+        loader.load('objects/base.obj', function (obj) {
+
             base = obj;
 
         }, onProgress, onError);
@@ -128,22 +146,42 @@ function animate() {
 }
 
 function render() {
-    
+
     // TODO: Change camera target here
-    
+
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
+    t++;
+    if (t% threshold ==0 && input1 > 0) {
+        input1--;
+        speed--;
+        angle = Math.random() * 2 * Math.PI;
 
-    // TODO: change object positions, rotations, states, etc here
+console.log("hello")
+console.log(angle)
+    }
 
+    base.position.x += Math.cos(angle) * 10;
+    base.position.z += Math.sin(angle) * 10;
+    console.log(base)
     renderer.render(scene, camera);
 }
 
-function clip(input, limit1, limit2) {
+function clip(input, limit1) {
     if (input < limit1) {
         return limit1;
-    } else if (input > limit2) {
-        return limit2;
     } else {
         return input;
     }
+}
+
+function submitInputs() {
+    document.getElementById("output-text").style.visibility = "hidden";
+
+    input1 = clip(input1Input.value, input1Min);
+t = 0
+    sendValues();
+}
+
+function sendValues() {
+    input1Input.value = Math.round(input1 * 100) / 100;
 }
