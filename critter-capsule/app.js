@@ -61,10 +61,12 @@ async function init() {
         capsule.checkCollisions = true;
     }); */
     plate = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/plate.stl", "", scene)).meshes;
+    ball = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/ball.stl", "", scene)).meshes;
+    capsule = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/capsule.stl", "", scene)).meshes;
 
 
     //plate colliders
-    var platePhysicsRoot = new BABYLON.Mesh("");
+    var platePhysicsRoot = new BABYLON.Mesh("platePhysicsRoot", scene);
     plate.forEach((m, i)=>{
         if(m.name.indexOf("box") != -1){
             m.isVisible = false;
@@ -78,41 +80,53 @@ async function init() {
     });
 
     platePhysicsRoot.getChildMeshes().forEach((m)=>{
-        if(m.name.indexOf("box") != -1){
-            m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 100 }, scene);
-        }
+        m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
+
     });
     platePhysicsRoot.position.set(0, 50, 0);
 
-    //var plateTorusCol = BABYLON.MeshBuilder.CreateTorus("plateTorusCol", {thickness: 30, diameter: 120});
+    //ball colliders
+    var ballPhysicsRoot = new BABYLON.Mesh("ballPhysicsRoot", scene);
+    ball.forEach((m, i)=>{
+        if(m.name.indexOf("sphere") != -1){
+            m.isVisible = false;
+            ballPhysicsRoot.addChild(m);
+        }
+    });
+    ball.forEach((m, i)=>{
+        if(m.parent == null){
+            ballPhysicsRoot.addChild(m)
+        }
+    });
+
+    ballPhysicsRoot.getChildMeshes().forEach((m)=>{
+        m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
+
+    });
+    ballPhysicsRoot.position.set(0, 100, 0);
 
     //capsule colliders
-    var capsuleCol = BABYLON.MeshBuilder.CreateCapsule("sphere", {radius: 7.9375, height: 49.873});
- 
-    //ball colliders
-    //var ballCol = BABYLON.Mesh.CreateSphere("ballCol", {diameter: 15.876});
-    var ballCol = BABYLON.Mesh.CreateSphere("ballCol", 16, 15.6, scene);
+    var capsulePhysicsRoot = new BABYLON.Mesh("capsulePhysicsRoot", scene);
+    capsule.forEach((m, i)=>{
+        if(m.name.indexOf("sphere") != -1){
+            m.isVisible = false;
+            capsulePhysicsRoot.addChild(m);
+        }
+    });
+    capsule.forEach((m, i)=>{
+        if(m.parent == null){
+            capsulePhysicsRoot.addChild(m)
+        }
+    });
 
-    capsuleCol.position.set(0, 100, 0);
-    ballCol.position.set(0, 100, 0);
-    //plateTorusCol.position.set(0, 0, 0);
-     
-    /* physicsRoot.addChild(plateTorusCol);
-    physicsRoot.addChild(capsuleCol); 
-    physicsRoot.addChild(ballCol);  */
+    capsulePhysicsRoot.getChildMeshes().forEach((m)=>{
+        m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
+    });
+    capsulePhysicsRoot.position.set(0, 100, 0);
     
-
-
-    
-
-    
-    //plateTorusCol.physicsImpostor = new BABYLON.PhysicsImpostor(plateTorusCol, BABYLON.PhysicsImpostor.ConvexHullImpostor, {mass:0}, scene);
-    capsuleCol.physicsImpostor = new BABYLON.PhysicsImpostor(capsuleCol, BABYLON.PhysicsImpostor.CapsuleImpostor, {mass:100}, scene);
-    ballCol.physicsImpostor = new BABYLON.PhysicsImpostor(ballCol, BABYLON.PhysicsImpostor.SphereImpostor, {mass:100}, scene);
-    platePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(platePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:3}, scene);
-
-    /* physicsRoot.rotation.x = Math.PI/5;
-    physicsRoot.rotation.z = Math.PI/6; */
+    capsulePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(capsulePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:50}, scene);
+    ballPhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(ballPhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:10}, scene);
+    platePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(platePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:100}, scene);
 
     engine.runRenderLoop(function () {
         scene.render();
