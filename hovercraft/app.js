@@ -7,21 +7,25 @@ import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/Orb
 var container;
 
 var camera, scene, renderer, controls;
+var balloon, base, group, plane;
 
-var balloon, base;
+var factor = 1;
+var popped = false;
+var ready = false;
 
-var input1;
+var input1 = 0;
+let input1Min = 0;
+var pressure = 0;
 
-var t = 0;
-
+let min = 0;
+let max = 30;
+let scale = 0;
+let sf = 0.02;
 var angle = 0;
-var speed = 0;
-
-let input1Min = 0
-let threshold = 100
-
 
 let targetPos = new THREE.Vector3(0, 0, 0);
+let speed = new THREE.Vector2(0, 0);
+
 let input1Input = document.getElementById("input1");
 
 
@@ -36,9 +40,10 @@ function init() {
     var submitInputsButton = document.getElementById("submit");
     submitInputsButton.onclick = submitInputs;
 
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 50000);
     camera.position.z = 500;
     camera.position.y = 500;
+    camera.position.x = 500;
 
     // scene
 
@@ -54,7 +59,7 @@ function init() {
 
     var geometry = new THREE.PlaneGeometry(1000, 1000);
     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-    var plane = new THREE.Mesh(geometry, material);
+    plane = new THREE.Mesh(geometry, material);
     scene.add(plane);
     plane.rotation.x = Math.PI / 2;
 
@@ -62,8 +67,11 @@ function init() {
 
     function loadModel() {
 
-        scene.add(balloon);
-        scene.add(base);
+        group = new THREE.Group();
+        group.add(balloon);
+        group.add(base);
+        scene.add(group);
+        balloon.visible = false;
     }
 
     var manager = new THREE.LoadingManager(loadModel);
@@ -146,23 +154,52 @@ function animate() {
 }
 
 function render() {
-
-    // TODO: Change camera target here
-
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-    t++;
-    if (t% threshold ==0 && input1 > 0) {
-        input1--;
-        speed--;
-        angle = Math.random() * 2 * Math.PI;
 
-console.log("hello")
-console.log(angle)
+    if (!ready) {
+        balloon.scale.x += sf;
+        balloon.scale.y += sf;
+        balloon.scale.z += sf;
+
+        if (balloon.scale.x >= scale) { ready = true; }
     }
 
-    base.position.x += Math.cos(angle) * 10;
-    base.position.z += Math.sin(angle) * 10;
-    console.log(base)
+    if (!popped && ready) {
+        pressure -= 0.01;
+
+        if (pressure <= 0) {
+            factor = 0.7;
+            pressure = 0;
+        }
+
+        speed.x *= factor;
+        speed.y *= factor;
+
+        if (group.position.x > (500 - 63.5)) {
+            speed.x = -Math.abs(speed.x);
+        } else if (group.position.x < (63.5 - 500)) {
+            speed.x = Math.abs(speed.x);
+        }
+
+        if (group.position.z > (500 - 63.5)) {
+            speed.y = -Math.abs(speed.y);
+        } else if (group.position.z < (63.5 - 500)) {
+            speed.y = Math.abs(speed.y);
+        }
+
+        group.position.z += speed.y;
+        group.position.x += speed.x;
+
+        var scaleF = 2 * pressure / (max - min);
+        balloon.scale.x = scaleF;
+        balloon.scale.y = scaleF;
+        balloon.scale.z = scaleF;
+    }
+
+    if (popped && ready) {
+        balloon.visible = false;
+    }
+
     renderer.render(scene, camera);
 }
 
@@ -178,7 +215,25 @@ function submitInputs() {
     document.getElementById("output-text").style.visibility = "hidden";
 
     input1 = clip(input1Input.value, input1Min);
-t = 0
+
+    factor = 1;
+    pressure = input1;
+
+    angle = Math.random() * Math.PI * 2;
+    speed.x = pressure * (Math.cos(angle)) / 3.2;
+    speed.y = pressure * (Math.sin(angle)) / 3.2;
+
+    popped = pressure > max;
+    if (pressure > 50) { pressure = 50; }
+    scale = 2 * pressure / (max - min);
+
+    ready = false;
+    balloon.visible = true;
+
+    balloon.scale.x = 0;
+    balloon.scale.y = 0;
+    balloon.scale.z = 0;
+
     sendValues();
 }
 
