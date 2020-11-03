@@ -2,7 +2,25 @@ init();
 var ball, plate, capsule;
 var x;
 async function init() {
-
+    /* var makePhysObj = async function(obj, scene, z){
+        var physicsRoot = new BABYLON.Mesh("physicsRoot", scene);
+        obj.forEach((m, i)=>{
+            if(m.name.indexOf("box") != -1){
+                m.isVisible = false;
+                physicsRoot.addChild(m);
+            }
+        });
+        obj.forEach((m, i)=>{
+            if(m.parent == null){
+                physicsRoot.addChild(m)
+            }
+        });
+        physicsRoot.getChildMeshes().forEach((m)=>{
+            m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
+        });
+        physicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(physicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:z}, scene);
+        return physicsRoot;
+    } */
     var canvas = document.getElementById("renderCanvas");
     var engine = new BABYLON.Engine(canvas, true);
     var createScene = function () { 
@@ -34,34 +52,8 @@ async function init() {
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 }, scene);
     ground.checkCollisions = true;
     
-
-    /* BABYLON.SceneLoader.ImportMesh("", "./objects/", "plate.stl", scene, function (meshes) {
-        plate = meshes[0];
-        plate.position.set(0, 0, 0);
-        //plate.parent = physicsRoot;
-        plate.physicsImpostor = new BABYLON.PhysicsImpostor(plate, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene);
-        plate.checkCollisions = true;
-    });
-
-    
-    BABYLON.SceneLoader.ImportMesh("", "./objects/", "ball.stl", scene, function (meshes) {
-        ball = meshes[0];
-        ball.position.set(0, 100, 0);
-        //ball.parent = physicsRoot;
-        ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene);
-        ball.checkCollisions = true;
-    });
-
-    
-    BABYLON.SceneLoader.ImportMesh("", "./objects/", "capsule.stl", scene, function (meshes) {
-        capsule = meshes[0];
-        capsule.position.set(0, 100, 0);
-        //capsule.parent = physicsRoot;
-        capsule.physicsImpostor = new BABYLON.PhysicsImpostor(capsule, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0.1 }, scene);
-        capsule.checkCollisions = true;
-    }); */
     plate = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/plate.stl", "", scene)).meshes;
-    ball = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/ball.stl", "", scene)).meshes;
+    ball = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/ball-2.stl", "", scene)).meshes;
     capsule = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/capsule.stl", "", scene)).meshes;
 
 
@@ -79,16 +71,19 @@ async function init() {
         }
     });
 
-    platePhysicsRoot.getChildMeshes().forEach((m)=>{
+    platePhysicsRoot.getChildMeshes().forEach((m)=>{        
+        m.scaling.x = Math.abs(m.scaling.x);
+        m.scaling.y = Math.abs(m.scaling.y);
+        m.scaling.z = Math.abs(m.scaling.z);
         m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
 
     });
-    platePhysicsRoot.position.set(0, 50, 0);
+    platePhysicsRoot.position = new BABYLON.Vector3(0, 50, 0);
 
     //ball colliders
     var ballPhysicsRoot = new BABYLON.Mesh("ballPhysicsRoot", scene);
     ball.forEach((m, i)=>{
-        if(m.name.indexOf("sphere") != -1){
+        if(m.name.indexOf("box") != -1){
             m.isVisible = false;
             ballPhysicsRoot.addChild(m);
         }
@@ -100,15 +95,18 @@ async function init() {
     });
 
     ballPhysicsRoot.getChildMeshes().forEach((m)=>{
+        m.scaling.x = Math.abs(m.scaling.x);
+        m.scaling.y = Math.abs(m.scaling.y);
+        m.scaling.z = Math.abs(m.scaling.z);
         m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
 
     });
-    ballPhysicsRoot.position.set(0, 100, 0);
+    ballPhysicsRoot.position = new BABYLON.Vector3(0, 100, 0);
 
     //capsule colliders
     var capsulePhysicsRoot = new BABYLON.Mesh("capsulePhysicsRoot", scene);
     capsule.forEach((m, i)=>{
-        if(m.name.indexOf("sphere") != -1){
+        if(m.name.indexOf("box") != -1){
             m.isVisible = false;
             capsulePhysicsRoot.addChild(m);
         }
@@ -120,10 +118,16 @@ async function init() {
     });
 
     capsulePhysicsRoot.getChildMeshes().forEach((m)=>{
+        m.scaling.x = Math.abs(m.scaling.x);
+        m.scaling.y = Math.abs(m.scaling.y);
+        m.scaling.z = Math.abs(m.scaling.z);
         m.physicsImpostor = new BABYLON.PhysicsImpostor(m, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, scene);
     });
-    capsulePhysicsRoot.position.set(0, 100, 0);
+    capsulePhysicsRoot.position = new BABYLON.Vector3(0, 100, 0);
     
+    /* capsulePhysicsRoot.scaling.scaleInPlace(scaling);
+    ballPhysicsRoot.scaling.scaleInPlace(scaling);
+    platePhysicsRoot.scaling.scaleInPlace(scaling); */
     capsulePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(capsulePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:50}, scene);
     ballPhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(ballPhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:10}, scene);
     platePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(platePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, {mass:100}, scene);
