@@ -8,11 +8,7 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var assembly;
-var spoon;
-var straw1;
-var straw2;
-var ball;
+var assembly, spoon, straw1, straw2, ball;
 
 let spoonAngleMin = Math.PI * 0.04;
 let spoonAngleDefaultMax = Math.PI * 0.5;

@@ -12,6 +12,17 @@ var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
+var input1, input2;
+
+let input1Min = 0;
+let input1Max = 99;
+
+let input2Min = 100;
+let input2Max = 199;
+
+let input1Input = document.getElementById("input1");
+let input2Input = document.getElementById("input2");
+
 init();
 animate();
 
@@ -20,6 +31,9 @@ function init() {
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
+    
+    var submitInputsButton = document.getElementById("submit");
+    submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = 20;
@@ -42,9 +56,9 @@ function init() {
 
     loader.load('objects/assembly.stl', function (geometry) {
 
-        var mesh = new THREE.Mesh(geometry, material);
+        assembly = new THREE.Mesh(geometry, material);
 
-        scene.add(mesh);
+        scene.add(assembly);
 
     });
 
@@ -107,4 +121,18 @@ function clip(input, limit1, limit2) {
     } else {
         return input;
     }
+}
+
+function submitInputs() {
+    document.getElementById("output-text").style.visibility = "hidden";
+
+    input1 = clip(input1Input.value, input1Min, input1Max);
+    input2 = clip(input2Input.value, input2Min, input2Max);
+
+    sendValues();
+}
+
+function sendValues() {
+    input1Input.value = Math.round(input1 * 100) / 100;
+    input2Input.value = Math.round(input2 * 100) / 100;
 }
