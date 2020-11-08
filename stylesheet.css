@@ -1,3 +1,36 @@
-body * {
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap');
+
+body {
     text-align: center;
+    background-color: black;
+    color: white;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.item {
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px;
+}
+
+img {
+    max-width: 300px;
+    max-height: 230px;
+}
+
+a {
+    color: white;
+    text-decoration: underline;
+}
+
+a#raft {
+    text-decoration: none;
 }
