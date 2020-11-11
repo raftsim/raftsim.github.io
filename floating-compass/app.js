@@ -16,9 +16,10 @@ var input1, input2;
 
 let input1Min = 0;
 
-let input1Max = 200;
+let input1Max = 360;
 
 let input1Input = document.getElementById("input1");
+let input2Input = document.getElementById("input2");
 
 var pi = Math.PI;
 
@@ -26,10 +27,14 @@ var size = 0;
 
 var negRad = size;
 
-// console.log("newPosX: " + newPosX);
-// console.log("newPosY: " + newPosY);
+var magnetNorth;
+var magnetSouth;
 
+var group = new THREE.Group();
+var negRad2 = 0;
+var negRad3 = Math.PI;
 
+var turnMag = false;
 
 init();
 animate();
@@ -45,7 +50,7 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.x = -10;
-    camera.position.y = -15;
+    camera.position.y = 15;
     camera.position.z = 15;
 
 
@@ -65,15 +70,21 @@ function init() {
 
     var material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
 
+    var material2 = new THREE.MeshPhongMaterial({ color: 0xFF0000 });
+
+    var material3 = new THREE.MeshPhongMaterial({ color: 0x0000FF });
+
     loader.load('objects/assembly.stl', function (geometry) {
 
         assembly = new THREE.Mesh(geometry, material);
 
         scene.add(assembly);
 
+        assembly.rotation.x = -Math.PI/2;
+
     });
 
-    loader.load('objects/magnet.stl', function (geometry) {
+    /* loader.load('objects/magnet.stl', function (geometry) {
 
         magnet = new THREE.Mesh(geometry, material);
 
@@ -84,28 +95,29 @@ function init() {
         magnet.position.z = 2.2;
         //magnet.rotation.x = 90;
 
-    });
+    }); */
 
     loader.load('objects/magnet-north.stl', function (geometry) {
 
         magnetNorth = new THREE.Mesh(geometry, material);
 
-        scene.add(magnetNorth);
+        group.add(magnetNorth);
 
     });
 
     loader.load('objects/magnet-south.stl', function (geometry) {
 
-        magnetSouth = new THREE.Mesh(geometry, material);
+        magnetSouth = new THREE.Mesh(geometry, material2);
 
-        scene.add(magnetSouth);
+        group.add(magnetSouth);
+
+        magnetSouth.position.z = -1.99;
 
     });
 
     // movement
-
-
-
+    scene.add(group);
+    group.position.z = 4;
     //
 
     renderer = new THREE.WebGLRenderer();
@@ -160,8 +172,27 @@ function render() {
         assembly.rotation.z += 0.01;
         size -= 0.01;
     }
-
-    console.log(camera.position);
+    if (Math.abs(group.rotation.y-negRad2) >= 0.01) {
+        if (group.rotation.y > negRad2) {
+            group.rotation.y -= 0.01;
+        } else if (group.rotation.y < negRad2) {
+            group.rotation.y += 0.01;
+        }
+        group.position.x = Math.sin(group.rotation.y) * 4;
+        group.position.z = Math.cos(group.rotation.y) * 4;
+    } else if (Math.abs(assembly.rotation.z-negRad2) >= 0.01) {
+        if (assembly.rotation.z > negRad2) {
+            assembly.rotation.z -= 0.01;
+        } else if (assembly.rotation.z < negRad2) {
+            assembly.rotation.z += 0.01;
+        }
+    }
+    console.log(input2);
+    if (input2.equals("magnetRot")) {
+        group.rotation.z = Math.PI;
+        assembly.rotation.z = Math.PI;
+    }
+    
 }
 
 function clip(input, limit1) {
@@ -177,21 +208,14 @@ function submitInputs() {
 
     input1 = clip(input1Input.value, input1Min, input1Max);
 
+    negRad2 = -1 * input1 * (pi / 180);
+
     sendValues();
 }
 
 function sendValues() {
     input1Input.value = Math.round(input1 * 100) / 100;
-
-    negRad = -1 * input1 * (pi / 180);
-    var newPosX = Math.sin(negRad) * 1.4625;
-    var newPosY = Math.cos(negRad) * 1.4625;
-
-    magnet.position.x = newPosX - 0.15;
-    magnet.position.y = newPosY;
-    magnet.position.z = 2.2;
-
-
+    console.log(input2);
 }
 
 
