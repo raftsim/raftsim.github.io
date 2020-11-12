@@ -12,14 +12,15 @@ canvas {
 }
 
 #form-container {
-    margin: 20px;
-    float: left;
+    margin: 20px 0px 0px 20px;
+    position: absolute;
 }
 
 form {
     font-size: 20px;
+    color: white;
+    float: right;
     text-align: right;
-    position: absolute;
 }
 
 input {
@@ -29,7 +30,7 @@ input {
     width: 100px;
 }
 
-#distance {
+#output {
     display: inline-block;
     margin-left: 10px;
     height: 20px;
@@ -37,7 +38,7 @@ input {
     text-align: left;
 }
 
-#distance-text {
+#output-text {
     font-size: 22px;
     visibility: hidden;
 }
@@ -66,13 +67,6 @@ input {
     text-align: center;
 }
 
-#timer-txt {
-    position: absolute;
-    left: 50%;
-    margin-left: -34px;
-    margin-top: 25px;
-    color: white;
-}
 #data {
     font-size: 20px;
     margin: 20px;
