@@ -80,7 +80,7 @@ function init() {
 
         scene.add(assembly);
 
-        assembly.rotation.x = -Math.PI/2;
+        assembly.rotation.x = -Math.PI / 2;
 
     });
 
@@ -172,7 +172,7 @@ function render() {
         assembly.rotation.z += 0.01;
         size -= 0.01;
     }
-    if (Math.abs(group.rotation.y-negRad2) >= 0.01) {
+    if (Math.abs(group.rotation.y - negRad2) >= 0.01) {
         if (group.rotation.y > negRad2) {
             group.rotation.y -= 0.01;
         } else if (group.rotation.y < negRad2) {
@@ -180,19 +180,18 @@ function render() {
         }
         group.position.x = Math.sin(group.rotation.y) * 4;
         group.position.z = Math.cos(group.rotation.y) * 4;
-    } else if (Math.abs(assembly.rotation.z-negRad2) >= 0.01) {
+    } else if (Math.abs(assembly.rotation.z - negRad2) >= 0.01) {
         if (assembly.rotation.z > negRad2) {
             assembly.rotation.z -= 0.01;
         } else if (assembly.rotation.z < negRad2) {
             assembly.rotation.z += 0.01;
         }
     }
-    console.log(input2);
-    if (input2.equals("magnetRot")) {
+
+    if (input2) {
         group.rotation.z = Math.PI;
         assembly.rotation.z = Math.PI;
     }
-    
 }
 
 function clip(input, limit1) {
@@ -207,6 +206,7 @@ function submitInputs() {
     document.getElementById("output-text").style.visibility = "hidden";
 
     input1 = clip(input1Input.value, input1Min, input1Max);
+    input2 = input2Input.checked;
 
     negRad2 = -1 * input1 * (pi / 180);
 
@@ -215,8 +215,4 @@ function submitInputs() {
 
 function sendValues() {
     input1Input.value = Math.round(input1 * 100) / 100;
-    console.log(input2);
 }
-
-
-
