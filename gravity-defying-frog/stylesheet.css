@@ -29,7 +29,7 @@ input {
     width: 100px;
 }
 
-#distance {
+#output {
     display: inline-block;
     margin-left: 10px;
     height: 20px;
@@ -37,7 +37,7 @@ input {
     text-align: left;
 }
 
-#distance-text {
+#output-text {
     font-size: 22px;
     visibility: hidden;
 }
