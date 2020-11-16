@@ -8,20 +8,22 @@ var container;
 
 var camera, scene, renderer, controls;
 
+var slide = false;
+
 var sliderL, sliderR, topStick, botStick, rubberBand, miniLeft, miniRight;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
 var input1, input2;
 
-let input1Min = 0;
-let input1Max = 99;
+let sGapMin = 0;
+let sGapMax = 80;//change by experimentation
 
 let input2Min = 100;
 let input2Max = 199;
 
-let input1Input = document.getElementById("input1");
-let input2Input = document.getElementById("input2");
+let sGapInput = document.getElementById("sGap");
+let input2Input = document.getElementById("bForce");
 
 //
 
@@ -49,39 +51,46 @@ function init() {
     var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
     scene.add(ambientLight);
 
-    var pointLight = new THREE.PointLight(0xffffff, 0.8);
+    var pointLight = new THREE.PointLight(0xffffff, 0.5);
     camera.add(pointLight);
     scene.add(camera);
 
     // manager
-
+    
     function loadModel() {
-
-        scene.add(sliderL);
-        sliderL.rotation.z = Math.PI/2;
-        sliderL.position.x = -38;
-
-        scene.add(sliderR);
-        sliderR.rotation.z = Math.PI/2;
-        sliderR.position.x = 38;
 
         scene.add(miniLeft);
         miniLeft.rotation.y = Math.PI/2;
         miniLeft.position.y = -0.5;
         miniLeft.position.x = -58;
+        miniLeft.children[0].material.color = new THREE.Color(0xeeeeee);
         
         scene.add(miniRight);
         miniRight.rotation.y = Math.PI/2;
         miniRight.position.y = -0.5;
         miniRight.position.x = 58;
+        miniRight.children[0].material.color = new THREE.Color(0xeeeeee);
+
+        scene.add(sliderL);
+        sliderL.rotation.z = Math.PI/2;
+        sliderL.position.x = -38;
+        sliderL.children[0].material.color = new THREE.Color(0x69856a);
+        
+        scene.add(sliderR);
+        sliderR.rotation.z = Math.PI/2;
+        sliderR.position.x = 38;
+        sliderR.children[0].material.color = new THREE.Color(0x69856a);
         
         scene.add(rubberBand);
         rubberBand.rotation.y = Math.PI/2;
+        rubberBand.children[0].material.color = new THREE.Color(0xcfa986);
 
         scene.add(topStick);
+        topStick.children[0].material.color = new THREE.Color(0xe5c7b6);
 
         scene.add(botStick);
         botStick.position.y = -2;
+        botStick.children[0].material.color = new THREE.Color(0xe5c7b6);
 
     }
 
@@ -200,8 +209,38 @@ function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
+    if (slide)
+    {
+
+        if (sliderL.position.x < Math.floor(sGapInput.value/-2 - 8.6))
+        {
+            sliderL.position.x++;
+        }
+        else if (sliderL.position.x > Math.floor(sGapInput.value/-2 - 8.6))
+        {
+            sliderL.position.x--;
+        }
+        if (sliderR.position.x < Math.floor(sGapInput.value/2 + 8.6))
+        {
+            sliderR.position.x++;
+        }
+        else if (sliderR.position.x > Math.floor(sGapInput.value/2 + 8.6))
+        {
+            sliderR.position.x--;
+            
+        }
+        if (sliderR.position.x == Math.floor(sGapInput.value/2 + 8.6))
+        {
+            slide = false;
+        }
+        
+        /* sliderL.position.x = sGapInput.value/-2 - 8.6;
+        sliderR.position.x = sGapInput.value/2 + 8.6; */
+    }
+    console.log(sliderL.position.x);
+    console.log(sliderR.position.x);
+
     // TODO: change object positions, rotations, states, etc here
-    console.log(camera.position);
     renderer.render(scene, camera);
 }
 
@@ -218,13 +257,11 @@ function clip(input, limit1, limit2) {
 function submitInputs() {
     document.getElementById("output-text").style.visibility = "hidden";
 
-    input1 = clip(input1Input.value, input1Min, input1Max);
+    input1 = clip(sGapInput.value, sGapMin, sGapMax);
     input2 = clip(input2Input.value, input2Min, input2Max);
 
-    sendValues();
-}
-
-function sendValues() {
-    input1Input.value = Math.round(input1 * 100) / 100;
+    sGapInput.value = Math.round(input1 * 100) / 100;
     input2Input.value = Math.round(input2 * 100) / 100;
+
+    slide = true;
 }
