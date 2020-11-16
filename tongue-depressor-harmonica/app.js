@@ -8,7 +8,7 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var assembly, slider1, slider2;
+var sliderL, sliderR, topStick, botStick, rubberBand, miniLeft, miniRight;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -23,6 +23,8 @@ let input2Max = 199;
 let input1Input = document.getElementById("input1");
 let input2Input = document.getElementById("input2");
 
+//
+
 init();
 animate();
 
@@ -36,8 +38,9 @@ function init() {
     submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 20;
-    camera.position.y = 2;
+    camera.position.y = 35;
+    camera.position.z = 100;
+
 
     // scene
 
@@ -54,9 +57,31 @@ function init() {
 
     function loadModel() {
 
-        scene.add(assembly);
-        scene.add(slider1);
-        scene.add(slider2);
+        scene.add(sliderL);
+        sliderL.rotation.z = Math.PI/2;
+        sliderL.position.x = -38;
+
+        scene.add(sliderR);
+        sliderR.rotation.z = Math.PI/2;
+        sliderR.position.x = 38;
+
+        scene.add(miniLeft);
+        miniLeft.rotation.y = Math.PI/2;
+        miniLeft.position.y = -0.5;
+        miniLeft.position.x = -58;
+        
+        scene.add(miniRight);
+        miniRight.rotation.y = Math.PI/2;
+        miniRight.position.y = -0.5;
+        miniRight.position.x = 58;
+        
+        scene.add(rubberBand);
+        rubberBand.rotation.y = Math.PI/2;
+
+        scene.add(topStick);
+
+        scene.add(botStick);
+        botStick.position.y = -2;
 
     }
 
@@ -86,21 +111,45 @@ function init() {
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('objects/assembly.obj', function (obj) {
+        loader.load('objects/mini rubber band.obj', function (obj) {
 
-            assembly = obj;
+            miniLeft = obj;
+
+        }, onProgress, onError);
+
+        loader.load('objects/mini rubber band.obj', function (obj) {
+
+            miniRight = obj;
 
         }, onProgress, onError);
 
         loader.load('objects/slider.obj', function (obj) {
 
-            slider1 = obj;
-
+            sliderL = obj;
         }, onProgress, onError);
+        
 
         loader.load('objects/slider.obj', function (obj) {
 
-            slider2 = obj;
+            sliderR = obj;
+
+        }, onProgress, onError);
+
+        loader.load('objects/rubber band.obj', function (obj) {
+
+            rubberBand = obj;
+
+        }, onProgress, onError);
+
+        loader.load('objects/stick.obj', function (obj) {
+
+            topStick = obj;
+
+        }, onProgress, onError);
+
+        loader.load('objects/stick.obj', function (obj) {
+
+            botStick = obj;
 
         }, onProgress, onError);
     }
@@ -152,7 +201,7 @@ function render() {
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
     // TODO: change object positions, rotations, states, etc here
-
+    console.log(camera.position);
     renderer.render(scene, camera);
 }
 
