@@ -20,7 +20,7 @@ async function init() {
         var gravityVector = new BABYLON.Vector3(0, -9.81, 0);
         var physicsPlugin = new BABYLON.AmmoJSPlugin();
         scene.enablePhysics(gravityVector, physicsPlugin);
-
+        
 
         return scene;
     }
@@ -33,6 +33,7 @@ async function init() {
     var ground = BABYLON.Mesh.CreateGround("ground1", 1000, 1000, 0, scene);
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 }, scene);
     ground.checkCollisions = true;
+    var physicsViewer = new BABYLON.Debug.PhysicsViewer();
 
     plate = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/plate.stl", "", scene)).meshes;
     ball = (await BABYLON.SceneLoader.ImportMeshAsync("", "./objects/ball-2.stl", "", scene)).meshes;
@@ -113,7 +114,8 @@ async function init() {
     capsulePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(capsulePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, { mass: 50 }, scene);
     ballPhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(ballPhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, { mass: 10 }, scene);
     platePhysicsRoot.physicsImpostor = new BABYLON.PhysicsImpostor(platePhysicsRoot, BABYLON.PhysicsImpostor.NoImpostor, { mass: 100 }, scene);
-
+    platePhysicsRoot.visibility = 0;
+    //physicsViewer.showImpostor(platePhysicsRoot.physicsImpostor);
     engine.runRenderLoop(function () {
         scene.render();
     });
