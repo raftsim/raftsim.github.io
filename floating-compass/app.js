@@ -32,9 +32,7 @@ var magnetSouth;
 
 var group = new THREE.Group();
 var negRad2 = 0;
-var negRad3 = Math.PI;
-
-var turnMag = false;
+var currentRot, targetRot, currentOrbit, targetOrbit;
 
 init();
 animate();
@@ -118,6 +116,8 @@ function init() {
     // movement
     scene.add(group);
     group.position.z = 4;
+    currentRot = group.rotation.y;
+    currentOrbit = group.rotation.y;
     //
 
     renderer = new THREE.WebGLRenderer();
@@ -157,6 +157,16 @@ function animate() {
     render();
 
 }
+/* 
+One variable needs to contain the magnet orbit rotation (targetOrbit)
+The other variable needs to contain the magnet rotation (magnetRot)
+One more variable called current orbit 
+magnetRot held by group.rotation.y
+Input 1 is what you set to magnet orbit rotation
+If input 2 is true, then, magnet rotation is orbit rotation-pi
+If input 2 is false, magnet rotation is orbit rotation.
+The compass moves to magnet rotation
+*/
 
 function render() {
 
@@ -165,34 +175,41 @@ function render() {
     controls.target.set(0, 0, 0);
 
     // TODO: change object positions, rotations, states, etc here
-
+    var speed = 0.02;
+    currentRot = group.rotation.y;
+    if (Math.abs(currentRot - targetRot) >= speed) { //negRad2 to magnetRot
+        console.log("1");
+        if (currentRot > targetRot) {
+            currentRot -= speed;
+        } else if (currentRot < targetRot) {
+            currentRot += speed;
+        }
+        group.rotation.y = currentRot;
+    } else if (Math.abs(currentOrbit - targetOrbit) >= speed) { // group.rotation.y to current orbit and negRad2 to target orbit
+        console.log("2");
+        if (currentOrbit > targetOrbit) {
+            currentOrbit -= speed;
+            currentRot -= speed;
+            targetRot -= speed;
+        } else if (currentOrbit < targetOrbit) {
+            currentOrbit += speed;
+            currentRot += speed;
+            targetRot += speed;
+        }
+        group.rotation.y = currentRot;
+        group.position.x = Math.sin(currentOrbit) * 4;
+        group.position.z = Math.cos(currentOrbit) * 4;
+    } else if (Math.abs(assembly.rotation.z - currentRot) >= speed) { //negRad2 to magnetRot
+        console.log("3");
+        if (assembly.rotation.z > currentRot) {
+            assembly.rotation.z -= speed;
+        } else if (assembly.rotation.z < currentRot) {
+            assembly.rotation.z += speed;
+        }
+    }
     renderer.render(scene, camera);
-
-    if (negRad < size) {
-        assembly.rotation.z += 0.01;
-        size -= 0.01;
-    }
-    if (Math.abs(group.rotation.y - negRad2) >= 0.01) {
-        if (group.rotation.y > negRad2) {
-            group.rotation.y -= 0.01;
-        } else if (group.rotation.y < negRad2) {
-            group.rotation.y += 0.01;
-        }
-        group.position.x = Math.sin(group.rotation.y) * 4;
-        group.position.z = Math.cos(group.rotation.y) * 4;
-    } else if (Math.abs(assembly.rotation.z - negRad2) >= 0.01) {
-        if (assembly.rotation.z > negRad2) {
-            assembly.rotation.z -= 0.01;
-        } else if (assembly.rotation.z < negRad2) {
-            assembly.rotation.z += 0.01;
-        }
-    }
-
-    if (input2) {
-        group.rotation.z = Math.PI;
-        assembly.rotation.z = Math.PI;
-    }
 }
+
 
 function clip(input, limit1) {
     if (input < limit1) {
@@ -205,12 +222,37 @@ function clip(input, limit1) {
 function submitInputs() {
     document.getElementById("output-text").style.visibility = "hidden";
 
+    while (currentOrbit > 360) { currentOrbit -= 360 };
+    while (targetOrbit > 360) { targetOrbit -= 360 };
+    while (currentRot > 360) { currentRot -= 360 };
+    while (targetRot > 360) { targetRot -= 360 };
+    while (group.rotation.y > 360) { group.rotation.y -= 360 };
+    while (assembly.rotation.z > 360) { assembly.rotation.z -= 360 };
+
     input1 = clip(input1Input.value, input1Min, input1Max);
     input2 = input2Input.checked;
-
-    negRad2 = -1 * input1 * (pi / 180);
-
     sendValues();
+
+    var rawDiff = input1 > currentOrbit ? input1 - currentOrbit : currentOrbit - input1;
+    while (rawDiff > 360) { rawDiff -= 360 };
+    var dist = rawDiff > 180 ? 360 - rawDiff : rawDiff;
+
+    if (currentOrbit < 180) {
+        if (input1 < currentOrbit + 180) {
+            input1 = currentOrbit + dist;
+        } else {
+            input1 = currentOrbit - dist;
+        }
+    } else {
+        if (input1 > currentOrbit - 180) {
+            input1 = currentOrbit - dist;
+        } else {
+            input1 = currentOrbit + dist;
+        }
+    }
+
+    targetOrbit = -1 * input1 * (Math.PI / 180);
+    targetRot = input2 ? group.rotation.y - Math.PI : group.rotation.y;
 }
 
 function sendValues() {
