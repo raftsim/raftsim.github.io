@@ -12,17 +12,12 @@ var base, frog;
 
 var rightHand, leftHand, rightFoot, leftFoot;
 
-var xMove, yMove, zMove;
-
-let move = new THREE.Euler3(0.68 - Math.PI/2, 0, 0);
+let move = new THREE.Euler(0, 0, 0);
+let rate = new THREE.Euler(0, 0, 0);
 
 let tRate = 100;
 
 var t = 0;
-
-var xRate = 0;
-var yRate = 0;
-var zRate = 0;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -82,13 +77,11 @@ function init() {
 
         frog = new THREE.Mesh(geometry, material);
         resetFrog();
+        
         frog.rotation.z = 0;
         frog.rotation.y = 0;
         frog.rotation.x = 0.68 - Math.PI / 2;
 
-        zMove = 0;
-        yMove = 0;
-        xMove = 0.68 - Math.PI / 2;
         scene.add(frog);
 
         console.log('catalina sucks');
@@ -143,13 +136,16 @@ function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    if (frog != undefined && t < tRate) {
-        console.log(frog.rotation);
-        frog.rotation.x += xRate;
-        frog.rotation.y += yRate;
-        frog.rotation.z += zRate;
+    console.log(frog.rotation);
+    /* if (frog != undefined && t < tRate) {
+        console.log(move);
+        console.log(rate);
+        console.log("");
+        frog.rotation.x += rate.x;
+        frog.rotation.y += rate.y;
+        frog.rotation.z += rate.z;
         t++;
-    }
+    } */
 
     renderer.render(scene, camera);
 }
@@ -159,21 +155,21 @@ function resetFrog() {
     // frog.rotation.y = 0;
     // frog.rotation.x = 0.68 - Math.PI / 2;
 
-    xMove = 0.68 - Math.PI / 2;
-    yMove = 0;
-    zMove = 0;
+    move.x = 0;
+    move.y = 0;
+    move.z = 0;
 
     t = 0;
 }
 
 function paperclips(lh, rh, ll, rl) {
-    let xLim = 1;
+    let xLim = 0.69;
     let yLim = 0.69;
     let zLim = 0.95;
 
-    xMove = clip(( /* xMove + */ 0.68 - Math.PI / 2 + 0.113 * (-rh - lh) + 0.68 * (rl - ll)), -xLim, xLim);
-    yMove = clip(( /* yMove + */ 0.3 * (rh - lh + ll + rl)), -yLim, yLim);
-    zMove = clip(( /* zMove + */ 0.1 * (lh - rh) + 0.3 * (rl - ll)), -zLim, zLim);
+    move.x = clip(( /* move.x + */ (0.68 - Math.PI / 2 /* + 0.113 * (-rh - lh) + 0.68 * (rl - ll) */)) /* - frog.rotation.x */, -xLim, xLim);
+    move.y = clip(( /* move.y + */ (0.3 * (rh - lh + ll + rl))) /* - frog.rotation.y */, -yLim, yLim);
+    move.z = clip(( /* move.z + */ (0.1 * (lh - rh) + 0.3 * (rl - ll))) /* - frog.rotation.z */, -zLim, zLim);
 }
 
 
@@ -200,9 +196,13 @@ function submitInputs() {
 
     paperclips(leftHand, rightHand, leftFoot, rightFoot);
 
-    xRate = xMove / tRate;
-    yRate = yMove / tRate;
-    zRate = zMove / tRate;
+    /* rate.x = (move.x - frog.rotation.x) / tRate;
+    rate.y = (move.y - frog.rotation.y) / tRate;
+    rate.z = (move.z - frog.rotation.z) / tRate; */
+
+    frog.rotation.x = move.x;
+    frog.rotation.y = move.y;
+    frog.rotation.z = move.z;
 
     sendValues();
 }
