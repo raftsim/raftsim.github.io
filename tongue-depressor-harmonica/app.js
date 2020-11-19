@@ -6,6 +6,10 @@ import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/Orb
 
 var container;
 
+var initFreq = 390.5; 
+//338.63 (for harmonica); 
+//390.05 (for sound5); 
+
 var camera, scene, renderer, controls, listener, sound;
 
 var slide = false;
@@ -17,16 +21,12 @@ var sliderL, sliderR, topStick, botStick, rubberBand, miniLeft, miniRight;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
-var input1, input2;
+var input1;
 
 let sGapMin = 0;
-let sGapMax = 80;//change by experimentation
-
-let input2Min = 100;
-let input2Max = 199;
+let sGapMax = 80;
 
 let sGapInput = document.getElementById("sGap");
-let input2Input = document.getElementById("bForce");
 
 //
 
@@ -38,7 +38,7 @@ function init() {
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
-    
+
     var submitInputsButton = document.getElementById("submit");
     submitInputsButton.onclick = submitInputs;
 
@@ -47,17 +47,17 @@ function init() {
     camera.position.z = 100;
 
     listener = new THREE.AudioListener();
-    camera.add( listener );
+    camera.add(listener);
 
     // create a global audio source
-    sound = new THREE.Audio( listener );
+    sound = new THREE.Audio(listener);
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
-    audioLoader.load( 'sound/Harmonica.m4a', function( buffer ) {
-        sound.setBuffer( buffer );
+    audioLoader.load('sound/sound5.mp3', function (buffer) {
+        sound.setBuffer(buffer);
         sound.setLoop(true);
-        sound.setVolume( 0.3);
+        sound.setVolume(1.2);
     });
 
 
@@ -73,33 +73,33 @@ function init() {
     scene.add(camera);
 
     // manager
-    
+
     function loadModel() {
 
         scene.add(miniLeft);
-        miniLeft.rotation.y = Math.PI/2;
+        miniLeft.rotation.y = Math.PI / 2;
         miniLeft.position.y = -0.5;
         miniLeft.position.x = -58;
         miniLeft.children[0].material.color = new THREE.Color(0xeeeeee);
-        
+
         scene.add(miniRight);
-        miniRight.rotation.y = Math.PI/2;
+        miniRight.rotation.y = Math.PI / 2;
         miniRight.position.y = -0.5;
         miniRight.position.x = 58;
         miniRight.children[0].material.color = new THREE.Color(0xeeeeee);
 
         scene.add(sliderL);
-        sliderL.rotation.z = Math.PI/2;
+        sliderL.rotation.z = Math.PI / 2;
         sliderL.position.x = -38;
         sliderL.children[0].material.color = new THREE.Color(0x69856a);
-        
+
         scene.add(sliderR);
-        sliderR.rotation.z = Math.PI/2;
+        sliderR.rotation.z = Math.PI / 2;
         sliderR.position.x = 38;
         sliderR.children[0].material.color = new THREE.Color(0x69856a);
-        
+
         scene.add(rubberBand);
-        rubberBand.rotation.y = Math.PI/2;
+        rubberBand.rotation.y = Math.PI / 2;
         rubberBand.children[0].material.color = new THREE.Color(0xcfa986);
 
         scene.add(topStick);
@@ -153,7 +153,7 @@ function init() {
 
             sliderL = obj;
         }, onProgress, onError);
-        
+
 
         loader.load('objects/slider.obj', function (obj) {
 
@@ -226,43 +226,34 @@ function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    if (slide)
-    {
-        if (sliderL.position.x < Math.floor(sGapInput.value/-2 - 8.6))
-        {
+    if (slide) {
+        if (sliderL.position.x < Math.floor(sGapInput.value / -2 - 8.6)) {
             sliderL.position.x++;
         }
-        else if (sliderL.position.x > Math.floor(sGapInput.value/-2 - 8.6))
-        {
+        else if (sliderL.position.x > Math.floor(sGapInput.value / -2 - 8.6)) {
             sliderL.position.x--;
         }
-        if (sliderR.position.x < Math.floor(sGapInput.value/2 + 8.6))
-        {
+        if (sliderR.position.x < Math.floor(sGapInput.value / 2 + 8.6)) {
             sliderR.position.x++;
         }
-        else if (sliderR.position.x > Math.floor(sGapInput.value/2 + 8.6))
-        {
+        else if (sliderR.position.x > Math.floor(sGapInput.value / 2 + 8.6)) {
             sliderR.position.x--;
-            
+
         }
-        if (sliderR.position.x == Math.floor(sGapInput.value/2 + 8.6))
-        {
+        if (sliderR.position.x == Math.floor(sGapInput.value / 2 + 8.6)) {
             console.log(sliderL.position.x);
             console.log(sliderR.position.x);
             sound.detune = 0;
             slide = false;
         }
     }
-    if(buzz)
-    {
-        if (time < 15)
-        {
+    if (buzz) {
+        if (time < 15) {
             time += 0.1;
         }
-        else
-        {
+        else {
             sound.pause();
-            buzz = false; 
+            buzz = false;
         }
     }
     // TODO: change object positions, rotations, states, etc here
@@ -279,18 +270,76 @@ function clip(input, limit1, limit2) {
     }
 }
 
+function setNote() {
+    var letter = "C";
+    var num = 4;
+    var note = ( 6.93 + Number(halfStep));
+    var add;
+
+    while (note < 0) 
+    {
+        note += 12;
+        num--;
+    }
+    while (note > 11) {
+        note -= 12;
+        num++;
+    }
+    note = Math.abs(note);
+    var cents = note % 1;
+    note -= cents;
+    cents *= 100;
+    cents = Math.floor(cents);
+    if(cents > 50)
+    {
+        add = false;
+        cents = 100 - cents;
+        if (note == 11)
+        {
+            num++
+            note = 0;
+        }
+        else
+        {
+            note++;
+        }
+    }
+
+
+    var notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    for (var i = 0; i < 12; i++) 
+    {
+        if (note == i)
+        {
+            letter = notes[i];
+        }
+    }
+    if (add)
+    {
+        return letter + num + " plus " + cents + " cents";
+    }
+    else
+    {
+        return letter + num + " minus " + cents + " cents";
+    }
+
+
+    // E4 plus 47 cents = 4.47 (for Harmonica)
+    // G4 minus 7 cents  = 6.93 (for sound5)
+}
+
 function submitInputs() {
     sound.pause();
     document.getElementById("output-text").style.visibility = "hidden";
 
     input1 = clip(sGapInput.value, sGapMin, sGapMax);
-    input2 = clip(input2Input.value, input2Min, input2Max);
-
     sGapInput.value = Math.round(input1 * 100) / 100;
-    input2Input.value = Math.round(input2 * 100) / 100;
 
-    tone = (921 * (Math.pow(0.977,sGapInput.value)));
-    halfStep = (12 * Math.log(tone/338.63))/Math.log(2);
+    tone = (921 * (Math.pow(0.977, sGapInput.value)));
+    halfStep = (12 * Math.log(tone / initFreq)) / Math.log(2);
+
+    document.getElementById("Frequency").innerText = Math.floor(tone);
+    document.getElementById("Note").innerText = setNote();
 
     //hrtz of original sound = 338.63; 
 
