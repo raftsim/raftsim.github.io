@@ -1,37 +1,25 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
-var assembly, magnet;
+var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
 var input1, input2;
 
 let input1Min = 0;
-
 let input1Max = 360;
 
 let input1Input = document.getElementById("input1");
 let input2Input = document.getElementById("input2");
 
-var pi = Math.PI;
-
-var size = 0;
-
-var negRad = size;
-
+var group = new THREE.Group();
 var magnetNorth;
 var magnetSouth;
 
-var group = new THREE.Group();
-var negRad2 = 0;
 var currentRot, targetRot, currentOrbit, targetOrbit;
 
 init();
@@ -51,8 +39,6 @@ function init() {
     camera.position.y = 15;
     camera.position.z = 15;
 
-
-
     // scene
 
     scene = new THREE.Scene();
@@ -66,58 +52,39 @@ function init() {
 
     var loader = new STLLoader();
 
-    var material = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
-
-    var material2 = new THREE.MeshPhongMaterial({ color: 0xFF0000 });
-
-    var material3 = new THREE.MeshPhongMaterial({ color: 0x0000FF });
+    var materialWhite = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
+    var materialRed = new THREE.MeshPhongMaterial({ color: 0xFF0000 });
 
     loader.load('objects/assembly.stl', function (geometry) {
 
-        assembly = new THREE.Mesh(geometry, material);
-
+        assembly = new THREE.Mesh(geometry, materialWhite);
         scene.add(assembly);
-
         assembly.rotation.x = -Math.PI / 2;
 
     });
 
-    /* loader.load('objects/magnet.stl', function (geometry) {
-
-        magnet = new THREE.Mesh(geometry, material);
-
-        scene.add(magnet);
-
-        magnet.position.x = -0.15;
-        magnet.position.y = 1.4625;
-        magnet.position.z = 2.2;
-        //magnet.rotation.x = 90;
-
-    }); */
-
     loader.load('objects/magnet-north.stl', function (geometry) {
 
-        magnetNorth = new THREE.Mesh(geometry, material);
-
+        magnetNorth = new THREE.Mesh(geometry, materialWhite);
         group.add(magnetNorth);
 
     });
 
     loader.load('objects/magnet-south.stl', function (geometry) {
 
-        magnetSouth = new THREE.Mesh(geometry, material2);
-
+        magnetSouth = new THREE.Mesh(geometry, materialRed);
         group.add(magnetSouth);
-
         magnetSouth.position.z = -1.99;
 
     });
 
     // movement
+
     scene.add(group);
     group.position.z = 4;
     currentRot = group.rotation.y;
     currentOrbit = group.rotation.y;
+
     //
 
     renderer = new THREE.WebGLRenderer();
@@ -148,8 +115,6 @@ function onWindowResize() {
 
 }
 
-//
-
 function animate() {
 
     requestAnimationFrame(animate);
@@ -157,36 +122,26 @@ function animate() {
     render();
 
 }
-/* 
-One variable needs to contain the magnet orbit rotation (targetOrbit)
-The other variable needs to contain the magnet rotation (magnetRot)
-One more variable called current orbit 
-magnetRot held by group.rotation.y
-Input 1 is what you set to magnet orbit rotation
-If input 2 is true, then, magnet rotation is orbit rotation-pi
-If input 2 is false, magnet rotation is orbit rotation.
-The compass moves to magnet rotation
-*/
 
 function render() {
 
-    // TODO: Change camera target here
+    controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    controls.target.set(0, 0, 0);
-
-    // TODO: change object positions, rotations, states, etc here
     var speed = 0.02;
     currentRot = group.rotation.y;
-    if (Math.abs(currentRot - targetRot) >= speed) { //negRad2 to magnetRot
-        console.log("1");
+
+    if (Math.abs(currentRot - targetRot) >= speed) {
+
         if (currentRot > targetRot) {
             currentRot -= speed;
         } else if (currentRot < targetRot) {
             currentRot += speed;
         }
+
         group.rotation.y = currentRot;
-    } else if (Math.abs(currentOrbit - targetOrbit) >= speed) { // group.rotation.y to current orbit and negRad2 to target orbit
-        console.log("2");
+
+    } else if (Math.abs(currentOrbit - targetOrbit) >= speed) {
+        
         if (currentOrbit > targetOrbit) {
             currentOrbit -= speed;
             currentRot -= speed;
@@ -196,20 +151,22 @@ function render() {
             currentRot += speed;
             targetRot += speed;
         }
+
         group.rotation.y = currentRot;
         group.position.x = Math.sin(currentOrbit) * 4;
         group.position.z = Math.cos(currentOrbit) * 4;
-    } else if (Math.abs(assembly.rotation.z - currentRot) >= speed) { //negRad2 to magnetRot
-        console.log("3");
+
+    } else if (Math.abs(assembly.rotation.z - currentRot) >= speed) {
+        
         if (assembly.rotation.z > currentRot) {
             assembly.rotation.z -= speed;
         } else if (assembly.rotation.z < currentRot) {
             assembly.rotation.z += speed;
         }
     }
+
     renderer.render(scene, camera);
 }
-
 
 function clip(input, limit1) {
     if (input < limit1) {
@@ -230,8 +187,8 @@ function submitInputs() {
     while (assembly.rotation.z > 360) { assembly.rotation.z -= 360 };
 
     input1 = clip(input1Input.value, input1Min, input1Max);
+    input1Input.value = Math.round(input1 * 100) / 100;
     input2 = input2Input.checked;
-    sendValues();
 
     var rawDiff = input1 > currentOrbit ? input1 - currentOrbit : currentOrbit - input1;
     while (rawDiff > 360) { rawDiff -= 360 };
@@ -253,8 +210,4 @@ function submitInputs() {
 
     targetOrbit = -1 * input1 * (Math.PI / 180);
     targetRot = input2 ? group.rotation.y - Math.PI : group.rotation.y;
-}
-
-function sendValues() {
-    input1Input.value = Math.round(input1 * 100) / 100;
 }
