@@ -6,9 +6,12 @@ import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/Orb
 
 var container;
 
-var camera, scene, renderer, controls;
+var camera, scene, renderer, controls, listener, sound;
 
 var slide = false;
+
+var tone, buzz, halfStep;
+var time = 0;
 
 var sliderL, sliderR, topStick, botStick, rubberBand, miniLeft, miniRight;
 
@@ -42,6 +45,20 @@ function init() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.y = 35;
     camera.position.z = 100;
+
+    listener = new THREE.AudioListener();
+    camera.add( listener );
+
+    // create a global audio source
+    sound = new THREE.Audio( listener );
+
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load( 'sound/Harmonica.m4a', function( buffer ) {
+        sound.setBuffer( buffer );
+        sound.setLoop(true);
+        sound.setVolume( 0.3);
+    });
 
 
     // scene
@@ -211,7 +228,6 @@ function render() {
 
     if (slide)
     {
-
         if (sliderL.position.x < Math.floor(sGapInput.value/-2 - 8.6))
         {
             sliderL.position.x++;
@@ -231,15 +247,24 @@ function render() {
         }
         if (sliderR.position.x == Math.floor(sGapInput.value/2 + 8.6))
         {
+            console.log(sliderL.position.x);
+            console.log(sliderR.position.x);
+            sound.detune = 0;
             slide = false;
         }
-        
-        /* sliderL.position.x = sGapInput.value/-2 - 8.6;
-        sliderR.position.x = sGapInput.value/2 + 8.6; */
     }
-    console.log(sliderL.position.x);
-    console.log(sliderR.position.x);
-
+    if(buzz)
+    {
+        if (time < 15)
+        {
+            time += 0.1;
+        }
+        else
+        {
+            sound.pause();
+            buzz = false; 
+        }
+    }
     // TODO: change object positions, rotations, states, etc here
     renderer.render(scene, camera);
 }
@@ -255,6 +280,7 @@ function clip(input, limit1, limit2) {
 }
 
 function submitInputs() {
+    sound.pause();
     document.getElementById("output-text").style.visibility = "hidden";
 
     input1 = clip(sGapInput.value, sGapMin, sGapMax);
@@ -263,5 +289,17 @@ function submitInputs() {
     sGapInput.value = Math.round(input1 * 100) / 100;
     input2Input.value = Math.round(input2 * 100) / 100;
 
+    tone = (921 * (Math.pow(0.977,sGapInput.value)));
+    halfStep = (12 * Math.log(tone/338.63))/Math.log(2);
+
+    //hrtz of original sound = 338.63; 
+
+    sound.detune += halfStep * 100;
+
+    sound.play();
+
+    time = 0;
+
     slide = true;
+    buzz = true;
 }
