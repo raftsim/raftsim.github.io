@@ -1,13 +1,9 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { OBJLoader } from 'https://unpkg.com/three/examples/jsm/loaders/OBJLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
 var assembly, spoon, straw1, straw2, ball;
 
 let spoonAngleMin = Math.PI * 0.04;
@@ -97,32 +93,28 @@ function init() {
         scene.add(assembly);
 
         {
+            scene.add(spoon);
             spoon.rotation.y = -Math.PI / 2;
             spoon.rotation.z = -Math.PI / 2;
-
-            scene.add(spoon);
         }
 
         {
+            scene.add(straw1);
             straw1.position.x = 3.12;
             straw1.rotation.z = Math.PI / 2;
-
-            scene.add(straw1);
         }
 
         {
+            scene.add(straw2);
             straw2.position.x = -straw1.position.x;
             straw2.rotation.z = straw1.rotation.z;
-
-            scene.add(straw2);
         }
 
         {
+            scene.add(ball);
             ball.position.x = -0.07;
             ball.position.y = spoon.position.y;
             ball.position.z = spoon.position.z;
-
-            scene.add(ball);
         }
     }
 
