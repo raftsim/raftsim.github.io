@@ -36,9 +36,9 @@ function init() {
     submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.x = -10;
-    camera.position.y = 15;
-    camera.position.z = 15;
+    camera.position.x = -6;
+    camera.position.y = 9;
+    camera.position.z = 9;
 
     // scene
 
