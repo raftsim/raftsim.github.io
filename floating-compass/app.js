@@ -20,7 +20,8 @@ var group = new THREE.Group();
 var magnetNorth;
 var magnetSouth;
 
-var currentRot, targetRot, currentOrbit, targetOrbit;
+var currentRot, currentOrbit, targetOrbit;
+var targetRot = 0;
 
 init();
 animate();
@@ -177,8 +178,6 @@ function clip(input, limit1) {
 }
 
 function submitInputs() {
-    document.getElementById("output-text").style.visibility = "hidden";
-
     while (currentOrbit > 360) { currentOrbit -= 360 };
     while (targetOrbit > 360) { targetOrbit -= 360 };
     while (currentRot > 360) { currentRot -= 360 };
@@ -209,5 +208,6 @@ function submitInputs() {
     }
 
     targetOrbit = -1 * input1 * (Math.PI / 180);
-    targetRot = input2 ? group.rotation.y - Math.PI : group.rotation.y;
+    targetRot = input2 ? targetRot - Math.PI : targetRot;
+    targetRot %= Math.PI;
 }
