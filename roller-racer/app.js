@@ -8,17 +8,24 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var assembly;
+var assembly, straw;
 
-let targetPos = new THREE.Vector3(0, 0, 0);
+var rotations = 0;
 
-var input1, input2;
+var distTraveled = 0;
+
+var rotationComplete = false;
+
+let targetPos = new THREE.Vector3(0, 0, 50.5);
+
+var input1;
+
+var strawSet = false;
+var speedFac = 0;
 
 let input1Min = 0;
 let input1Max = 99;
-
-let input2Min = 100;
-let input2Max = 199;
+var speed = 1;
 
 let input1Input = document.getElementById("input1");
 let input2Input = document.getElementById("input2");
@@ -28,16 +35,18 @@ animate();
 
 function init() {
 
+    
+
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
-    
+
     var submitInputsButton = document.getElementById("submit");
     submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 20;
-    camera.position.y = 2;
+    camera.position.z = 300;
+    camera.position.y = 200;
 
     // scene
 
@@ -59,6 +68,17 @@ function init() {
         assembly = new THREE.Mesh(geometry, material);
 
         scene.add(assembly);
+
+    });
+
+    loader.load('objects/straw.stl', function (geometry) {
+
+        straw = new THREE.Mesh(geometry, material);
+        straw.position.z = 113.625;
+        straw.rotation.x = -Math.PI / 2;
+        straw.rotation.y = Math.acos(64.25 / 145);
+        straw.rotation.z = -Math.PI / 2;
+        scene.add(straw);
 
     });
 
@@ -102,13 +122,45 @@ function animate() {
 
 }
 
+function getDistance(inTorque) {
+    return inTorque * 3;
+}
+
 function render() {
 
     // TODO: Change camera target here
 
+    /* targetPos.x++;
+    camera.position.x++; */
+    //console.log(input1Input.value);
+    
+    // TODO: change object positions, rotations, states, etc here
+    if (rotations <= (input1 * 2 * Math.PI)) {
+        straw.rotation.y += 0.1;
+        rotations += 0.1;
+    }
+    else if (rotations > (input1 * 2 * Math.PI) && input1 != null) {
+        if (straw.rotation.y % (2 * Math.PI) > Math.acos(64.25 / 145)) {
+            straw.rotation.y -= 0.05;
+            distTraveled -= 0.05;
+        }
+        else if (distTraveled >= (-2) * Math.PI * input1) {
+            straw.position.x+=3;
+            assembly.position.x+=speed;
+            assembly.rotation.z -= speed * 0.0156;
+            distTraveled -= speed * 0.0156;
+            if(speed>0){
+                speed -= speedFac;
+            }
+        }
+    }
+    console.log(assembly.position.x);
+    console.log(straw.position.x);
+    console.log(speed);
+    console.log("______________");
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    // TODO: change object positions, rotations, states, etc here
+    
 
     renderer.render(scene, camera);
 }
@@ -124,15 +176,16 @@ function clip(input, limit1, limit2) {
 }
 
 function submitInputs() {
+
     document.getElementById("output-text").style.visibility = "hidden";
 
     input1 = clip(input1Input.value, input1Min, input1Max);
-    input2 = clip(input2Input.value, input2Min, input2Max);
-
+    speed = input1;
+    speedFac = speed/(((2) * Math.PI * input1)/(0.0156));
+    //console.log(speedFac);
     sendValues();
 }
 
 function sendValues() {
     input1Input.value = Math.round(input1 * 100) / 100;
-    input2Input.value = Math.round(input2 * 100) / 100;
 }
