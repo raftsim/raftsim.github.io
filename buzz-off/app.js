@@ -1,13 +1,9 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { OBJLoader } from 'https://unpkg.com/three/examples/jsm/loaders/OBJLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
 var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
@@ -20,7 +16,6 @@ var angle = 0;
 let angleIncrease = 0.2;
 
 var radius = 1;
-
 let radiusInput = document.getElementById("radius");
 let rotationInput = document.getElementById("rotation");
 
@@ -149,13 +144,9 @@ function render() {
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
     angle += angleIncrease;
-
     setPosition(radius, angle);
-
     volumeFactor = 200;
-
     volume = Math.round((radius ** 0.25) * ((angleIncrease * 2) ** 2.5) * volumeFactor * 10) / 10;
-
     document.getElementById("volume").innerText = volume;
 
     renderer.render(scene, camera);

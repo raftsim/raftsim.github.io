@@ -1,13 +1,9 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
 var assembly;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
@@ -22,6 +18,8 @@ let input2Max = 199;
 
 let input1Input = document.getElementById("input1");
 let input2Input = document.getElementById("input2");
+
+var output = "";
 
 init();
 animate();
@@ -57,7 +55,6 @@ function init() {
     loader.load('objects/assembly.stl', function (geometry) {
 
         assembly = new THREE.Mesh(geometry, material);
-
         scene.add(assembly);
 
     });
@@ -135,4 +132,9 @@ function submitInputs() {
 function sendValues() {
     input1Input.value = Math.round(input1 * 100) / 100;
     input2Input.value = Math.round(input2 * 100) / 100;
+}
+
+function sendOutput() {
+    document.getElementById("output-text").style.visibility = "visible";
+    document.getElementById("output").innerText = output;
 }
