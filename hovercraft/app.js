@@ -1,11 +1,8 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { OBJLoader } from 'https://unpkg.com/three/examples/jsm/loaders/OBJLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
 var balloon, base, group, plane;
 
@@ -28,9 +25,9 @@ let speed = new THREE.Vector2(0, 0);
 
 let input1Input = document.getElementById("input1");
 
-
 init();
 animate();
+
 function init() {
 
     container = document.createElement('div');
@@ -41,9 +38,9 @@ function init() {
     submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 50000);
-    camera.position.z = 500;
+    camera.position.z = 800;
     camera.position.y = 500;
-    camera.position.x = 500;
+    camera.position.x = 400;
 
     // scene
 
@@ -55,7 +52,6 @@ function init() {
     var pointLight = new THREE.PointLight(0xffffff, 0.8);
     camera.add(pointLight);
     scene.add(camera);
-
 
     var geometry = new THREE.PlaneGeometry(1000, 1000);
     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
@@ -72,6 +68,7 @@ function init() {
         group.add(base);
         scene.add(group);
         balloon.visible = false;
+
     }
 
     var manager = new THREE.LoadingManager(loadModel);
@@ -156,24 +153,20 @@ function animate() {
 function render() {
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
-    if (!ready) {
+    if (!ready && balloon != null) {
         balloon.scale.x += sf;
         balloon.scale.y += sf;
         balloon.scale.z += sf;
 
-        if (balloon.scale.x >= scale) { ready = true; }
+        ready = balloon.scale.x >= scale;
     }
 
-    if (!popped && ready) {
+    if (!popped && ready && input1 > 0) {
         pressure -= 0.01;
 
         if (pressure <= 0) {
-            factor = 0.7;
             pressure = 0;
         }
-
-        speed.x *= factor;
-        speed.y *= factor;
 
         if (group.position.x > (500 - 63.5)) {
             speed.x = -Math.abs(speed.x);
@@ -187,8 +180,8 @@ function render() {
             speed.y = Math.abs(speed.y);
         }
 
-        group.position.z += speed.y;
-        group.position.x += speed.x;
+        group.position.z += speed.y * pressure / input1;
+        group.position.x += speed.x * pressure / input1;
 
         var scaleF = 2 * pressure / (max - min);
         balloon.scale.x = scaleF;
@@ -216,7 +209,6 @@ function submitInputs() {
 
     input1 = clip(input1Input.value, input1Min);
 
-    factor = 1;
     pressure = input1;
 
     angle = Math.random() * Math.PI * 2;
@@ -234,9 +226,9 @@ function submitInputs() {
     balloon.scale.y = 0;
     balloon.scale.z = 0;
 
-    sendValues();
-}
-
-function sendValues() {
     input1Input.value = Math.round(input1 * 100) / 100;
+    if (input1 > 0) {
+        document.getElementById("output").innerText = Math.round(input1 * 50 / 30) + "s";
+        document.getElementById("output-text").style.visibility = "visible";
+    }
 }
