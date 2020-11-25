@@ -163,16 +163,26 @@ function resetFrog() {
 }
 
 function paperclips(lh, rh, ll, rl) {
-    let xLim = 0.69;
-    let yLim = 0.69;
-    let zLim = 0.95;
+    let xLim = 2.1;
+    let yLim = 0.8;
+    let zLim = 0.6;
 
-    move.x = clip(( /* move.x + */ (0.68 - Math.PI / 2 /* + 0.113 * (-rh - lh) + 0.68 * (rl - ll) */)) /* - frog.rotation.x */, -xLim, xLim);
-    move.y = clip(( /* move.y + */ (0.3 * (rh - lh + ll + rl))) /* - frog.rotation.y */, -yLim, yLim);
-    move.z = clip(( /* move.z + */ (0.1 * (lh - rh) + 0.3 * (rl - ll))) /* - frog.rotation.z */, -zLim, zLim);
+    move.x = clip(( /* move.x + */ (0.68 - Math.PI / 2 - 0.113 * (rh + lh) + 0.68 * (rl + ll))), -xLim, -0.89);
+    move.y = clip(( /* move.y + */ (0.3 * (rh - lh + rl - ll))), -yLim, yLim);
+    move.z = clip(( /* move.z + */ (0.1 * (lh - rh) + 0.3 * (rl - ll))), -zLim, zLim);
 }
 
 
+
+// function paperclips(lh, rh, ll, rl) {
+//     let xLim = 0.69;
+//     let yLim = 0.69;
+//     let zLim = 0.95;
+
+//     move.x = clip(( /* move.x + */ (0.68 - Math.PI / 2 - 0.113 * (rh + lh) + 0.68 * (rl + ll))) /* - frog.rotation.x */, -0.68-Math.PI/2, 0.68-Math.PI/2);
+//     move.y = clip(( /* move.y + */ (0.3 * (rh - lh + rl - ll))) /* - frog.rotation.y */, -yLim, yLim);
+//     move.z = clip(( /* move.z + */ (0.1 * (lh - rh) + 0.3 * (rl - ll))) /* - frog.rotation.z */, -zLim, zLim);
+// }
 
 function clip(input, limit1, limit2) {
     if (input < limit1) {
@@ -203,6 +213,8 @@ function submitInputs() {
     frog.rotation.x = move.x;
     frog.rotation.y = move.y;
     frog.rotation.z = move.z;
+
+    // console.log((0.68-Math.PI/2) + (Math.PI));
 
     sendValues();
 }
