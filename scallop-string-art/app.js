@@ -15,7 +15,6 @@ var string;
 
 var twoPi = 6.283185307178467;
 
-var count = 0;
 var end = false;
 
 var input1, input2;
@@ -74,7 +73,7 @@ function init() {
     });
 
     stringPoints.push(new THREE.Vector3(46.5, dis, 0));
-    var lineMat = new THREE.LineBasicMaterial({ color: 0xff48ff });
+    var lineMat = new THREE.LineBasicMaterial({ color: color() });
     var lineGeo = new THREE.BufferGeometry().setFromPoints(stringPoints);
     string = new THREE.Line(lineGeo, lineMat);
     scene.add(string);
@@ -133,6 +132,13 @@ function nextPoint(i) {
     }
 }
 
+function color()
+{
+    var h = Math.floor(Math.random() * 360)
+    var s = Math.floor(Math.random() * 100)
+    return new THREE.Color('hsl(' + h + ', ' + s + '%, 40%)');
+}
+
 
 function render() {
 
@@ -178,6 +184,8 @@ function submitInputs() {
     stringPoints.length = 0;
     stringPoints.push(new THREE.Vector3(46.5, dis, 0));
     string.geometry.setFromPoints(stringPoints);
+
+    string.material.color = color();
 
     tgap = document.getElementById("tgap");
     bgap = document.getElementById("bgap");
