@@ -4,20 +4,32 @@ import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/Orb
 
 var container;
 var camera, scene, renderer, controls;
-var assembly;
+var disk;
+
+var dis = 0.45;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
+var stringPoints = [];
+var string;
+
+var twoPi = 6.283185307178467;
+
+var count = 0;
+var end = false;
+
 var input1, input2;
+var angleInc;
+var draw = false;
 
-let input1Min = 0;
-let input1Max = 99;
+var gapMin = 0;
+let gapMax = 16;
+var angle;
 
-let input2Min = 100;
-let input2Max = 199;
+var tside = true;
 
-let input1Input = document.getElementById("input1");
-let input2Input = document.getElementById("input2");
+var tgap = document.getElementById("tgap");
+var bgap = document.getElementById("bgap");
 
 var output = "";
 
@@ -29,13 +41,13 @@ function init() {
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
-    
+
     var submitInputsButton = document.getElementById("submit");
     submitInputsButton.onclick = submitInputs;
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 20;
-    camera.position.y = 2;
+    camera.position.z = 70;
+    camera.position.y = 140;
 
     // scene
 
@@ -49,15 +61,23 @@ function init() {
     scene.add(camera);
 
     var loader = new STLLoader();
-
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-    loader.load('objects/assembly.stl', function (geometry) {
 
-        assembly = new THREE.Mesh(geometry, material);
-        scene.add(assembly);
+
+    loader.load('objects/disk.stl', function (geometry) {
+        disk = new THREE.Mesh(geometry, material);
+        scene.add(disk);
+        disk.position.y = 0.375;
+        disk.rotation.x = Math.PI / 2;
 
     });
+
+    stringPoints.push(new THREE.Vector3(46.5, dis, 0));
+    var lineMat = new THREE.LineBasicMaterial({ color: 0xff48ff });
+    var lineGeo = new THREE.BufferGeometry().setFromPoints(stringPoints);
+    string = new THREE.Line(lineGeo, lineMat);
+    scene.add(string);
 
     //
 
@@ -99,13 +119,45 @@ function animate() {
 
 }
 
+function nextPoint(i) {
+    var x = 46.5 * Math.cos(i);
+    var z = 46.5 * -Math.sin(i);
+    stringPoints.push(new THREE.Vector3(x, tside ? dis : -dis, z));
+    stringPoints.push(new THREE.Vector3(x, tside ? -dis : dis, z));
+    string.geometry.setFromPoints(stringPoints);
+    if ((Math.round(i * 100) / 100) == 0) 
+    {
+        stringPoints.push(new THREE.Vector3(x, tside ? -5 : 5, z));
+        string.geometry.setFromPoints(stringPoints);
+        end = true;
+    }
+}
+
+
 function render() {
 
     // TODO: Change camera target here
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
+    if (draw) {
+        if (!end) {
+            if (tside) {
+                angleInc = (input1 + 1) * Math.PI / 9;
+            }
+            else {
+                angleInc = (input2 + 1) * Math.PI / 9;
+            }
+            angle += angleInc;
+            angle = angle % (twoPi);
+            nextPoint(angle);
+            tside = !tside;
+        }
+        else 
+        {
+            draw = false;
+        }
 
-    // TODO: change object positions, rotations, states, etc here
+    }
 
     renderer.render(scene, camera);
 }
@@ -121,17 +173,25 @@ function clip(input, limit1, limit2) {
 }
 
 function submitInputs() {
-    document.getElementById("output-text").style.visibility = "hidden";
+    tside = true;
+    draw = false;
+    stringPoints.length = 0;
+    stringPoints.push(new THREE.Vector3(46.5, dis, 0));
+    string.geometry.setFromPoints(stringPoints);
 
-    input1 = clip(input1Input.value, input1Min, input1Max);
-    input2 = clip(input2Input.value, input2Min, input2Max);
+    tgap = document.getElementById("tgap");
+    bgap = document.getElementById("bgap");
 
-    sendValues();
-}
+    input1 = clip(Math.round(tgap.value), gapMin, gapMax);
+    input2 = clip(Math.round(bgap.value), gapMin, gapMax);
 
-function sendValues() {
-    input1Input.value = Math.round(input1 * 100) / 100;
-    input2Input.value = Math.round(input2 * 100) / 100;
+    tgap.value = input1;
+    bgap.value = input2;
+
+    angle = 0;
+
+    draw = true;
+    end = false;
 }
 
 function sendOutput() {
