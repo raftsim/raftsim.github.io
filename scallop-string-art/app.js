@@ -6,10 +6,10 @@ var container;
 var camera, scene, renderer, controls;
 var disk;
 
+let targetPos = new THREE.Vector3(0, 0, 0);
+
 var dis = 0.45;
 var count = 0;
-
-let targetPos = new THREE.Vector3(0, 0, 0);
 
 var stringPoints = [];
 var string;
@@ -29,8 +29,6 @@ var angle;
 var tside = true;
 
 var gap = document.getElementById("gap");
-
-var output = "";
 
 init();
 animate();
@@ -62,9 +60,8 @@ function init() {
     var loader = new STLLoader();
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-
-
     loader.load('objects/disk.stl', function (geometry) {
+
         disk = new THREE.Mesh(geometry, material);
         scene.add(disk);
         disk.position.y = 0.375;
@@ -119,32 +116,32 @@ function animate() {
 }
 
 function nextPoint(i) {
+
     var x = 46.5 * Math.cos(i);
     var z = 46.5 * -Math.sin(i);
     stringPoints.push(new THREE.Vector3(x, tside ? dis : -dis, z));
     stringPoints.push(new THREE.Vector3(x, tside ? -dis : dis, z));
     string.geometry.setFromPoints(stringPoints);
-    if (count == 35)                 //(Math.round(i * 100) / 100) == 0)
-    {
+
+    if (count == 35) {
         stringPoints.push(new THREE.Vector3(x, tside ? -5 : 5, z));
         string.geometry.setFromPoints(stringPoints);
         end = true;
     }
 }
 
-function color()
-{
+function color() {
+
     var h = Math.floor(Math.random() * 360)
     var s = Math.floor(Math.random() * 100)
     return new THREE.Color('hsl(' + h + ', ' + s + '%, 35%)');
-}
 
+}
 
 function render() {
 
-    // TODO: Change camera target here
-
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
+
     if (draw) {
         if (!end) {
             if (tside) {
@@ -153,14 +150,13 @@ function render() {
             else {
                 angleInc = (input2) * Math.PI / 9;
             }
+
             angle += angleInc;
             angle = angle % (twoPi);
             nextPoint(angle);
             count++;
             tside = !tside;
-        }
-        else 
-        {
+        } else {
             draw = false;
         }
 
@@ -194,7 +190,7 @@ function submitInputs() {
     gap = document.getElementById("gap");
 
     input1 = clip(Math.round(gap.value), gapMin, gapMax);
-    input2 = clip(Math.round(17-input1), gapMin, gapMax);
+    input2 = clip(Math.round(17 - input1), gapMin, gapMax);
 
     gap.value = input1;
 
@@ -202,9 +198,4 @@ function submitInputs() {
 
     draw = true;
     end = false;
-}
-
-function sendOutput() {
-    document.getElementById("output-text").style.visibility = "visible";
-    document.getElementById("output").innerText = output;
 }
