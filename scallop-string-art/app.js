@@ -7,6 +7,7 @@ var camera, scene, renderer, controls;
 var disk;
 
 var dis = 0.45;
+var count = 0;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -21,14 +22,13 @@ var input1, input2;
 var angleInc;
 var draw = false;
 
-var gapMin = 0;
+var gapMin = 1;
 let gapMax = 16;
 var angle;
 
 var tside = true;
 
-var tgap = document.getElementById("tgap");
-var bgap = document.getElementById("bgap");
+var gap = document.getElementById("gap");
 
 var output = "";
 
@@ -124,7 +124,7 @@ function nextPoint(i) {
     stringPoints.push(new THREE.Vector3(x, tside ? dis : -dis, z));
     stringPoints.push(new THREE.Vector3(x, tside ? -dis : dis, z));
     string.geometry.setFromPoints(stringPoints);
-    if ((Math.round(i * 100) / 100) == 0) 
+    if (count == 35)                 //(Math.round(i * 100) / 100) == 0)
     {
         stringPoints.push(new THREE.Vector3(x, tside ? -5 : 5, z));
         string.geometry.setFromPoints(stringPoints);
@@ -136,7 +136,7 @@ function color()
 {
     var h = Math.floor(Math.random() * 360)
     var s = Math.floor(Math.random() * 100)
-    return new THREE.Color('hsl(' + h + ', ' + s + '%, 40%)');
+    return new THREE.Color('hsl(' + h + ', ' + s + '%, 35%)');
 }
 
 
@@ -148,14 +148,15 @@ function render() {
     if (draw) {
         if (!end) {
             if (tside) {
-                angleInc = (input1 + 1) * Math.PI / 9;
+                angleInc = (input1) * Math.PI / 9;
             }
             else {
-                angleInc = (input2 + 1) * Math.PI / 9;
+                angleInc = (input2) * Math.PI / 9;
             }
             angle += angleInc;
             angle = angle % (twoPi);
             nextPoint(angle);
+            count++;
             tside = !tside;
         }
         else 
@@ -181,20 +182,21 @@ function clip(input, limit1, limit2) {
 function submitInputs() {
     tside = true;
     draw = false;
+
+    count = 0;
+
     stringPoints.length = 0;
     stringPoints.push(new THREE.Vector3(46.5, dis, 0));
     string.geometry.setFromPoints(stringPoints);
 
     string.material.color = color();
 
-    tgap = document.getElementById("tgap");
-    bgap = document.getElementById("bgap");
+    gap = document.getElementById("gap");
 
-    input1 = clip(Math.round(tgap.value), gapMin, gapMax);
-    input2 = clip(Math.round(bgap.value), gapMin, gapMax);
+    input1 = clip(Math.round(gap.value), gapMin, gapMax);
+    input2 = clip(Math.round(17-input1), gapMin, gapMax);
 
-    tgap.value = input1;
-    bgap.value = input2;
+    gap.value = input1;
 
     angle = 0;
 
