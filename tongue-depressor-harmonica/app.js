@@ -1,25 +1,20 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { OBJLoader } from 'https://unpkg.com/three/examples/jsm/loaders/OBJLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
-var initFreq = 390.5; 
-//338.63 (for harmonica); 
-//390.05 (for sound5); 
-
 var camera, scene, renderer, controls, listener, sound;
 
-var slide = false;
+let targetPos = new THREE.Vector3(0, 0, 0);
 
-var tone, buzz, halfStep;
-var time = 0;
+var initFreq = 390.5;
+// 338.63 (for harmonica);
+// 390.05 (for sound5);
 
 var sliderL, sliderR, topStick, botStick, rubberBand, miniLeft, miniRight;
-
-let targetPos = new THREE.Vector3(0, 0, 0);
+var tone, buzz, halfStep;
+var slide = false;
+var time = 0;
 
 var input1;
 
@@ -27,8 +22,6 @@ let sGapMin = 0;
 let sGapMax = 80;
 
 let sGapInput = document.getElementById("sGap");
-
-//
 
 init();
 animate();
@@ -59,7 +52,6 @@ function init() {
         sound.setLoop(true);
         sound.setVolume(1.2);
     });
-
 
     // scene
 
@@ -129,7 +121,6 @@ function init() {
             console.log('model ' + Math.round(percentComplete, 2) + '% downloaded');
 
         }
-
     }
 
     function onError() { }
@@ -153,7 +144,6 @@ function init() {
 
             sliderL = obj;
         }, onProgress, onError);
-
 
         loader.load('objects/slider.obj', function (obj) {
 
@@ -222,24 +212,22 @@ function animate() {
 
 function render() {
 
-    // TODO: Change camera target here
-
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
     if (slide) {
         if (sliderL.position.x < Math.floor(sGapInput.value / -2 - 8.6)) {
             sliderL.position.x++;
-        }
-        else if (sliderL.position.x > Math.floor(sGapInput.value / -2 - 8.6)) {
+        } else if (sliderL.position.x > Math.floor(sGapInput.value / -2 - 8.6)) {
             sliderL.position.x--;
         }
+
         if (sliderR.position.x < Math.floor(sGapInput.value / 2 + 8.6)) {
             sliderR.position.x++;
-        }
-        else if (sliderR.position.x > Math.floor(sGapInput.value / 2 + 8.6)) {
+        } else if (sliderR.position.x > Math.floor(sGapInput.value / 2 + 8.6)) {
             sliderR.position.x--;
 
         }
+
         if (sliderR.position.x == Math.floor(sGapInput.value / 2 + 8.6)) {
             console.log(sliderL.position.x);
             console.log(sliderR.position.x);
@@ -247,16 +235,16 @@ function render() {
             slide = false;
         }
     }
+
     if (buzz) {
         if (time < 15) {
             time += 0.1;
-        }
-        else {
+        } else {
             sound.pause();
             buzz = false;
         }
     }
-    // TODO: change object positions, rotations, states, etc here
+
     renderer.render(scene, camera);
 }
 
@@ -273,56 +261,50 @@ function clip(input, limit1, limit2) {
 function setNote() {
     var letter = "C";
     var num = 4;
-    var note = ( 6.93 + Number(halfStep));
+    var note = (6.93 + Number(halfStep));
     var add;
 
-    while (note < 0) 
-    {
+    while (note < 0) {
         note += 12;
         num--;
     }
+
     while (note > 11) {
         note -= 12;
         num++;
     }
+
     note = Math.abs(note);
     var cents = note % 1;
     note -= cents;
     cents *= 100;
     cents = Math.floor(cents);
-    if(cents > 50)
-    {
+
+    if (cents > 50) {
         add = false;
         cents = 100 - cents;
-        if (note == 11)
-        {
+
+        if (note == 11) {
             num++
             note = 0;
-        }
-        else
-        {
+        } else {
             note++;
         }
     }
 
 
     var notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    for (var i = 0; i < 12; i++) 
-    {
-        if (note == i)
-        {
+    for (var i = 0; i < 12; i++) {
+        if (note == i) {
             letter = notes[i];
         }
     }
-    if (add)
-    {
+
+    if (add) {
         return letter + num + " plus " + cents + " cents";
-    }
-    else
-    {
+    } else {
         return letter + num + " minus " + cents + " cents";
     }
-
 
     // E4 plus 47 cents = 4.47 (for Harmonica)
     // G4 minus 7 cents  = 6.93 (for sound5)
@@ -341,14 +323,11 @@ function submitInputs() {
     document.getElementById("Frequency").innerText = Math.floor(tone);
     document.getElementById("Note").innerText = setNote();
 
-    //hrtz of original sound = 338.63; 
+    // hertz of original sound = 338.63; 
 
     sound.detune += halfStep * 100;
-
     sound.play();
-
     time = 0;
-
     slide = true;
     buzz = true;
 }
