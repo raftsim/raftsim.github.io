@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>raft Kit Simulations - Waterbeads</title>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body>
+    <script type="module" src="app.js"></script>
+    <div id="form-container">
+        <form id="form">
+            Bead 1 Water Temp (°C): <input type="number" value=38.00 id="hotTemp"> <br>
+            Bead 2 Water Temp (°C): <input type="number" value=20.00 id="coldTemp"> <br>
+            Amount of Salt (g): <input type="number" value=0.00 id="salinity"> <br>
+            Time (hrs): <input type="number" value=8.00 id="hours"> <br>
+            <div>
+                <button type="button" id="submit" style="visibility: hidden;">Start</button>
+            </div>
+        </form>
+    </div>
+    <div id = "data">
+        <table>
+            <tr>
+                <td id = "timer-txt">Time: <span id="time">0</span> hrs</td>
+                <td>Diameter (mm)</td>
+            </tr>
+            <tr>
+                <td > Bead 1:</td>
+                <td id = "hbead"></td>
+            </tr>
+            <tr>
+                <td > Bead 2:</td>
+                <td id = "cbead"> </td>
+            </tr>
+        </table>
+    </div>
+    
+</body>
+
+</html>
