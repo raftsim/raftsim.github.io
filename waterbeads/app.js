@@ -1,18 +1,13 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
-var num = 0;
-
 var camera, scene, renderer, controls;
 var stage1, stage2, stage3, stage4;
 let cupx = 40;
-let cupy = 0;
-let cupz = -55;
+let cupy = -55;
+let cupz = 0;
 var cupopac = 0.4;
 var wateropac = 0.6;
 var col = Math.floor(Math.random() * 2) + 1;
@@ -32,8 +27,11 @@ let saltMax = 17.9;
 let timeMin = 0.00;
 let timeMax = 8.00;
 
-var hgrow,cgrow;
+var hgrow, cgrow;
 
+var num = 0;
+
+var coldTempInput, hotTempInput, salinityInput, timeInput;
 var submitInputsButton;
 
 var beadsRise = true;
@@ -41,15 +39,8 @@ var hfirst = false;
 var cfirst = false;
 var hdown = false;
 var cdown = false;
-var cdis = false;
-var hdis = false;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
-
-var coldTempInput, hotTempInput, salinityInput, timeInput;
-
-var ring;
-//three.js library
 
 init();
 animate();
@@ -62,12 +53,11 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.x = 0;
-    camera.position.y = -154;
-    camera.position.z = -10;
+    camera.position.y = -10;
+    camera.position.z = 154;
 
     submitInputsButton = document.getElementById("submit");
     submitInputsButton.onclick = submitInputs;
-    
 
     // scene
 
@@ -92,8 +82,9 @@ function init() {
     loader.load('objects/cup.stl', function (geometry) {
 
         hot_cup = new THREE.Mesh(geometry, hotcupmat);
-
         scene.add(hot_cup);
+
+        hot_cup.rotation.x = -Math.PI / 2;
         hot_cup.position.x = -cupx;
         hot_cup.position.y = cupy;
         hot_cup.position.z = cupz;
@@ -103,8 +94,9 @@ function init() {
     loader.load('objects/cup.stl', function (geometry) {
 
         cold_cup = new THREE.Mesh(geometry, colcupmat);
-
         scene.add(cold_cup);
+
+        cold_cup.rotation.x = -Math.PI / 2;
         cold_cup.position.x = cupx;
         cold_cup.position.y = cupy;
         cold_cup.position.z = cupz;
@@ -113,18 +105,21 @@ function init() {
     loader.load('objects/cup_water.stl', function (geometry) {
 
         hcup_water = new THREE.Mesh(geometry, watermat);
+        scene.add(hcup_water);
+
+        hcup_water.rotation.x = -Math.PI / 2;
         hcup_water.position.x = -cupx;
         hcup_water.position.y = cupy;
         hcup_water.position.z = cupz;
-        scene.add(hcup_water);
 
     });
 
     loader.load('objects/cup_water.stl', function (geometry) {
 
         ccup_water = new THREE.Mesh(geometry, watermat);
-
         scene.add(ccup_water);
+
+        ccup_water.rotation.x = -Math.PI / 2;
         ccup_water.position.x = cupx;
         ccup_water.position.y = cupy;
         ccup_water.position.z = cupz;
@@ -134,10 +129,10 @@ function init() {
     loader.load('objects/marble.stl', function (geometry) {
 
         marble = new THREE.Mesh(geometry, colmar);
-
         scene.add(marble);
+
         marble.visible = false;
-        marble.position.z = -45;
+        marble.position.y = -45;
 
     });
 
@@ -146,6 +141,7 @@ function init() {
         test_tube = new THREE.Mesh(geometry, coltube);
 
         scene.add(test_tube);
+        test_tube.rotation.x = -Math.PI / 2;
         test_tube.visible = false;
 
     });
@@ -154,6 +150,8 @@ function init() {
 
         ttube_water = new THREE.Mesh(geometry, watermat);
         scene.add(ttube_water);
+        
+        ttube_water.rotation.x = -Math.PI / 2;
         ttube_water.visible = false;
 
     });
@@ -161,22 +159,22 @@ function init() {
     loader.load('objects/waterbead.stl', function (geometry) {
 
         hbead = new THREE.Mesh(geometry, hbeadmat);
-
         scene.add(hbead);
+
         hbead.position.x = -cupx;
-        hbead.position.z = cupz + 1.85;
+        hbead.position.y = cupy + 1.85;
     });
 
     loader.load('objects/waterbead.stl', function (geometry) {
 
         cbead = new THREE.Mesh(geometry, cbeadmat);
-
         scene.add(cbead);
-        cbead.position.x = cupx;
-        cbead.position.z = cupz + 1.85;
-    });
-    //
 
+        cbead.position.x = cupx;
+        cbead.position.y = cupy + 1.85;
+    });
+
+    //
 
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -190,14 +188,11 @@ function init() {
     controls.enablePan = false;
     controls.enableDamping = true;
 
-
     //
 
     window.addEventListener('resize', onWindowResize, false);
 
     reset();
-
-
 
 }
 
@@ -221,12 +216,15 @@ function animate() {
 }
 
 function color() {
+
     var h = Math.floor(Math.random() * 360)
     var s = Math.floor(Math.random() * 100)
     return new THREE.Color('hsl(' + h + ', ' + s + '%, 50%)');
+
 }
 
 function grow(i, j) {
+
     hbead.scale.x = i;
     hbead.scale.y = i;
     hbead.scale.z = i;
@@ -234,10 +232,11 @@ function grow(i, j) {
     cbead.scale.x = j;
     cbead.scale.y = j;
     cbead.scale.z = j;
+
 }
 
-function submitInputs() 
-{
+function submitInputs() {
+
     hot_cup.position.x = -cupx;
     hot_cup.position.y = cupy;
     hot_cup.position.z = cupz;
@@ -255,10 +254,10 @@ function submitInputs()
     ccup_water.position.z = cupz;
 
     cbead.position.x = cold_cup.position.x;
-    cbead.position.z = cold_cup.position.z + 1.7;
+    cbead.position.y = cold_cup.position.y + 1.7;
 
     hbead.position.x = hot_cup.position.x;
-    hbead.position.z = hot_cup.position.z + 1.7;
+    hbead.position.y = hot_cup.position.y + 1.7;
 
     ptime = 0;
 
@@ -279,6 +278,7 @@ function submitInputs()
     cdown = false;
 
     col = Math.floor(Math.random() * 2) + 1;
+
     if (col == 1) {
         hbead.material.color = color();
         cbead.material.color = new THREE.Color(0xffffff);
@@ -291,8 +291,8 @@ function submitInputs()
     }
 
     camera.position.x = 0;
-    camera.position.y = -154;
-    camera.position.z = -10;
+    camera.position.y = -10;
+    camera.position.z = 154;
 
     stage1 = true;
     stage2 = false;
@@ -301,30 +301,24 @@ function submitInputs()
 
     reset();
 
-    if (hotTempInput > coldTempInput)
-    {
+    if (hotTempInput > coldTempInput) {
         hot_cup.material.color = new THREE.Color(0xffcccb);
         cold_cup.material.color = new THREE.Color(0xb2ecff);
 
-    }
-    else if (hotTempInput < coldTempInput)
-    {
+    } else if (hotTempInput < coldTempInput) {
         cold_cup.material.color = new THREE.Color(0xffcccb);
         hot_cup.material.color = new THREE.Color(0xb2ecff);
-    }
-    else if (hotTempInput == coldTempInput)
-    {
+    } else if (hotTempInput == coldTempInput) {
         cold_cup.material.color = new THREE.Color(0xffffff);
         hot_cup.material.color = new THREE.Color(0xffffff);
     }
-    
 }
 
 function reset() {
 
     targetPos.x = 0;
-    targetPos.y = 0;
-    targetPos.z = -20;
+    targetPos.y = -20;
+    targetPos.z = 0;
 
     document.getElementById("hbead").innerText = "";
     document.getElementById("cbead").innerText = "";
@@ -344,71 +338,73 @@ function reset() {
 
     hdiam = ((-1 * Math.pow(2, ((-0.01 * hotTempInput) + 5))) + 42.5);
     hdiam = hdiam * Math.pow(Math.E, (-0.18 * salinityInput));
-    if (hdiam < 2.65)
-    {
+
+    if (hdiam < 2.65) {
         hdiam = 2.65;
     }
 
     cdiam = ((-1 * Math.pow(2, ((-0.01 * coldTempInput) + 5))) + 42.5);
     cdiam = cdiam * Math.pow(Math.E, (-0.18 * salinityInput));
-    if (cdiam < 2.65)
-    {
+    
+    if (cdiam < 2.65) {
         cdiam = 2.65;
     }
 
-    cdiam = cdiam * (timeInput/8);
-    hdiam = hdiam * (timeInput/8);
+    cdiam = cdiam * (timeInput / 8);
+    hdiam = hdiam * (timeInput / 8);
 
     sizeh = 1;
     sizec = 1;
 
-    hgrow = ((hdiam/2.65)-1)/(timeInput/0.01);
-    cgrow = ((cdiam/2.65)-1)/(timeInput/0.01);
+    hgrow = ((hdiam / 2.65) - 1) / (timeInput / 0.01);
+    cgrow = ((cdiam / 2.65) - 1) / (timeInput / 0.01);
 
     console.log(hdiam);
     console.log(cdiam);
-}
 
+}
 
 function render() {
 
-    // TODO: Change camera target here
-
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
+
     if (stage1) {
 
         grow(sizeh, sizec);
         sizeh += hgrow;
         sizec += cgrow;
         time += 0.01;
-        hbead.position.z += (0.014 * hgrow)/0.01;
-        cbead.position.z += (0.014 * cgrow)/0.01;
+        hbead.position.y += (0.014 * hgrow) / 0.01;
+        cbead.position.y += (0.014 * cgrow) / 0.01;
         t = time.toFixed(2);
         document.getElementById("time").innerText = t;
 
-        if (time >= (timeInput - 0.001)) 
-        {
+        if (time >= (timeInput - 0.001)) {
+
             document.getElementById("hbead").innerText = hdiam.toFixed(2);
             document.getElementById("cbead").innerText = cdiam.toFixed(2);
             stage1 = false;
             time = 0;
             t = time;
             stage2 = true;
+            
             if (col == 1) {
                 cbead.visible = true;
-            }
-            else {
+            } else {
                 hbead.visible = true;
             }
         }
     }
     if (stage2) {
+
         document.getElementById("timer-txt").style.display = 'block';
         hot_cup.material.opacity -= (cupopac / 80).toFixed(4);
         cold_cup.material.opacity -= (cupopac / 80).toFixed(4);
         hcup_water.material.opacity -= (wateropac / 80).toFixed(4);
         ccup_water.material.opacity -= (wateropac / 80).toFixed(4);
+        
         if (cold_cup.material.opacity <= 0 && hot_cup.material.opacity <= 0) {
+        
             cold_cup.visible = false;
             hot_cup.visible = false;
             ccup_water.visible = false;
@@ -422,24 +418,29 @@ function render() {
             stage2 = false;
             ttube_water.visible = true;
             test_tube.visible = true;
-        }
 
+        }
     }
 
     if (stage3) {
+
         ptime++;
-        var x = camera.position.y < -203 || ptime > 300;
-        var y = camera.position.z > 44 || ptime > 300;
-        var z = targetPos.z > 10;
+        var x = camera.position.z > 203 || ptime > 300;
+        var y = camera.position.y > 44 || ptime > 300;
+        var z = targetPos.y > 10;
+        
         if (!x) {
-            camera.position.y--;
-        }
-        if (!y) {
             camera.position.z++;
         }
-        if (!z) {
-            targetPos.z++;
+
+        if (!y) {
+            camera.position.y++;
         }
+
+        if (!z) {
+            targetPos.y++;
+        }
+        
         if (x & y & z) {
             stage3 = false;
             stage4 = true;
@@ -447,71 +448,71 @@ function render() {
     }
 
     if (stage4) {
+        
         marble.visible = true;
+        
         if (beadsRise) {
-            if (cbead.position.z < 75) {
-                cbead.position.z++;
-                hbead.position.z++;
-            }
-            else {
+            if (cbead.position.y < 75) {
+                cbead.position.y++;
+                hbead.position.y++;
+            } else {
                 beadsRise = false;
+
                 if (col == 1) {
                     cfirst = true;
-                }
-                else {
+                } else {
                     hfirst = true;
                 }
             }
         }
+
         if (hfirst) {
             if (hbead.position.x < 0) {
                 hbead.position.x++;
-            }
-            else {
+            } else {
                 hfirst = false;
                 hdown = true;
             }
         }
+
         if (cfirst) {
             if (cbead.position.x > 0) {
                 cbead.position.x--;
-            }
-            else {
+            } else {
                 cfirst = false;
                 cdown = true;
             }
         }
+
         if (hdown) {
-            if (hbead.position.z > marble.position.z + 7.875 + (sizec * 2.7) + (sizeh * (2.7 / 2))) {
-                hbead.position.z--;
-                if (hbead.position.z < 30 && col == 2) {
+            if (hbead.position.y > marble.position.y + 7.875 + (sizec * 2.7) + (sizeh * (2.7 / 2))) {
+                hbead.position.y--;
+
+                if (hbead.position.y < 30 && col == 2) {
                     hbead.visible = false;
                     cfirst = true;
                 }
-            }
-            else {
+            } else {
                 hdown = false;
             }
         }
+
         if (cdown) {
-            if (cbead.position.z > marble.position.z + 7.875 + (sizeh * (2.7)) + (sizec * (2.7 / 2))) {
-                cbead.position.z--;
-                if (cbead.position.z < 30 && col == 1) {
+            if (cbead.position.y > marble.position.y + 7.875 + (sizeh * (2.7)) + (sizec * (2.7 / 2))) {
+                cbead.position.y--;
+
+                if (cbead.position.y < 30 && col == 1) {
                     cbead.visible = false;
                     hfirst = true;
                 }
-            }
-            else {
+            } else {
                 cdown = false;
             }
         }
-
-    }
-    else
-    {
+    } else {
         num++;
-        if (num >40)
-        {
+
+        if (num > 40) {
             submitInputsButton.style.visibility = 'visible';
             num = 0;
         }
@@ -523,11 +524,9 @@ function render() {
 function clip(input, limit1, limit2) {
     if (input < limit1) {
         return limit1;
-    }
-    else if (input > limit2) {
+    } else if (input > limit2) {
         return limit2;
-    }
-    else {
+    } else {
         return input;
     }
 }
