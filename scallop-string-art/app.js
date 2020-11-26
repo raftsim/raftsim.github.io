@@ -16,17 +16,15 @@ var string;
 
 var twoPi = 6.283185307178467;
 
-var end = false;
-
 var input1, input2;
 var angleInc;
 var draw = false;
+var end = false;
+var tside = true;
 
 var gapMin = 1;
 let gapMax = 16;
 var angle;
-
-var tside = true;
 
 var gap = document.getElementById("gap");
 
