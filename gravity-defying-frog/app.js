@@ -138,7 +138,7 @@ function render() {
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
     console.log(frog.rotation);
-    /* if (frog != undefined && t < tRate) {
+    if (frog != undefined && t < tRate) {
         console.log(move);
         console.log(rate);
         console.log("");
@@ -146,7 +146,7 @@ function render() {
         frog.rotation.y += rate.y;
         frog.rotation.z += rate.z;
         t++;
-    } */
+    }
 
     renderer.render(scene, camera);
 }
@@ -193,13 +193,13 @@ function submitInputs() {
 
     paperclips(leftHand, rightHand, leftFoot, rightFoot);
 
-    /* rate.x = (move.x - frog.rotation.x) / tRate;
+    rate.x = (move.x - frog.rotation.x) / tRate;
     rate.y = (move.y - frog.rotation.y) / tRate;
-    rate.z = (move.z - frog.rotation.z) / tRate; */
+    rate.z = (move.z - frog.rotation.z) / tRate;
 
-    frog.rotation.x = move.x;
-    frog.rotation.y = move.y;
-    frog.rotation.z = move.z;
+    // frog.rotation.x = move.x;
+    // frog.rotation.y = move.y;
+    // frog.rotation.z = move.z;
 
     // console.log((0.68-Math.PI/2) + (Math.PI));
 
