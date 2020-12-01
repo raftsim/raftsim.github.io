@@ -162,7 +162,7 @@ function resetFrog() {
 
 function paperclips(lh, rh, ll, rl) {
     let xLim = 1.9;
-    let yLim = 0.8;
+    let yLim = 1;
     let zLim = 0.6;
 
     move.x = clip(( (0.68 - Math.PI / 2 - 0.113 * (rh + lh) + 0.68 * (rl + ll))), -xLim, -0.95);
