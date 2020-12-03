@@ -82,6 +82,20 @@ function init() {
 
     });
 
+    const material2 = new THREE.LineBasicMaterial({
+        color: 0xffffff
+    });
+    
+    const points = [];
+    points.push( new THREE.Vector3( 0, -64.25, 100 ) );
+    points.push( new THREE.Vector3( 0, -64.25, 0 ) );
+
+    
+    const geometry = new THREE.BufferGeometry().setFromPoints( points );
+    
+    const line = new THREE.Line( geometry, material2 );
+    scene.add( line );
+
     //
 
     renderer = new THREE.WebGLRenderer();
@@ -145,19 +159,19 @@ function render() {
             distTraveled -= 0.05;
         }
         else if (distTraveled >= (-2) * Math.PI * input1) {
-            straw.position.x+=3;
+            straw.position.x+=speed;
             assembly.position.x+=speed;
             assembly.rotation.z -= speed * 0.0156;
             distTraveled -= speed * 0.0156;
+            
             if(speed>0){
                 speed -= speedFac;
-            }
+            }  
         }
     }
-    console.log(assembly.position.x);
-    console.log(straw.position.x);
-    console.log(speed);
-    console.log("______________");
+
+    document.getElementById("output").innerText = Math.round(assembly.position.x)/100 + " cm";
+    targetPos.x = assembly.position.x/2;
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
     
@@ -177,12 +191,21 @@ function clip(input, limit1, limit2) {
 
 function submitInputs() {
 
-    document.getElementById("output-text").style.visibility = "hidden";
+    document.getElementById("output-text").style.visibility = "visible";
+    document.getElementById("output").innerText = 0;
+
+
+    assembly.position.x = 0;
+    straw.position.x = 0;
+    distTraveled = 0;
+    rotations = 0;
+    assembly.rotation.z = 0;
+    straw.rotation.y = Math.acos(64.25 / 145);
 
     input1 = clip(input1Input.value, input1Min, input1Max);
-    speed = input1;
+    speed = Number(input1);
     speedFac = speed/(((2) * Math.PI * input1)/(0.0156));
-    //console.log(speedFac);
+    console.log(speed);
     sendValues();
 }
 
