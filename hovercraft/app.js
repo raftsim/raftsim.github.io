@@ -227,8 +227,6 @@ function submitInputs() {
     balloon.scale.z = 0;
 
     input1Input.value = Math.round(input1 * 100) / 100;
-    if (input1 > 0) {
-        document.getElementById("output").innerText = Math.round(input1 * 50 / 30) + "s";
-        document.getElementById("output-text").style.visibility = "visible";
-    }
+    document.getElementById("output").innerText = (popped || input1 == 0 ? 0 : Math.round(input1 * 50 / 30)) + "s";
+    document.getElementById("output-text").style.visibility = "visible";
 }
