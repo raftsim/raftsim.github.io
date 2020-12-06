@@ -1,22 +1,16 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
 var base, frog;
-
 var rightHand, leftHand, rightFoot, leftFoot;
 
 let move = new THREE.Euler(0, 0, 0);
 let rate = new THREE.Euler(0, 0, 0);
 
 let tRate = 100;
-
 var t = 0;
 
 let targetPos = new THREE.Vector3(0, 0, 0);
@@ -25,7 +19,6 @@ let tfRightHand = document.getElementById("rightHand");
 let tfLeftHand = document.getElementById("leftHand");
 let tfRightFoot = document.getElementById("rightFoot");
 let tfLeftFoot = document.getElementById("leftFoot");
-
 
 init();
 animate();
@@ -56,7 +49,6 @@ function init() {
     scene.add(camera);
 
     var loader = new STLLoader();
-
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
     loader.load('objects/base.stl', function (geometry) {
@@ -129,11 +121,7 @@ function animate() {
 
 }
 
-let threshold = 0.01;
-
 function render() {
-
-    // TODO: Change camera target here
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
 
@@ -170,7 +158,6 @@ function paperclips(lh, rh, ll, rl) {
     move.z = clip(( (0.1 * (lh - rh) + 0.3 * (rl - ll))), -zLim, zLim);
 }
 
-
 function clip(input, limit1, limit2) {
     if (input < limit1) {
         return limit1;
@@ -180,8 +167,6 @@ function clip(input, limit1, limit2) {
         return input;
     }
 }
-
-
 
 function submitInputs() {
     resetFrog();
@@ -196,12 +181,6 @@ function submitInputs() {
     rate.x = (move.x - frog.rotation.x) / tRate;
     rate.y = (move.y - frog.rotation.y) / tRate;
     rate.z = (move.z - frog.rotation.z) / tRate;
-
-    // frog.rotation.x = move.x;
-    // frog.rotation.y = move.y;
-    // frog.rotation.z = move.z;
-
-    // console.log((0.68-Math.PI/2) + (Math.PI));
 
     sendValues();
 }
