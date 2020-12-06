@@ -1,41 +1,30 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
 var assembly, straw;
 
 var rotations = 0;
-
 var distTraveled = 0;
-
-var rotationComplete = false;
 
 let targetPos = new THREE.Vector3(0, 0, 50.5);
 
 var input1;
-
-var strawSet = false;
-var speedFac = 0;
-
 let input1Min = 0;
 let input1Max = 99;
+
+var speedFac = 0;
 var speed = 1;
+let returnSpeed = 4;
 
 let input1Input = document.getElementById("input1");
-let input2Input = document.getElementById("input2");
 
 init();
 animate();
 
 function init() {
-
-    
 
     container = document.createElement('div');
     container.id = "container";
@@ -60,13 +49,11 @@ function init() {
     scene.add(camera);
 
     var loader = new STLLoader();
-
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
     loader.load('objects/assembly.stl', function (geometry) {
 
         assembly = new THREE.Mesh(geometry, material);
-
         scene.add(assembly);
 
     });
@@ -85,16 +72,14 @@ function init() {
     const material2 = new THREE.LineBasicMaterial({
         color: 0xffffff
     });
-    
-    const points = [];
-    points.push( new THREE.Vector3( 0, -64.25, 100 ) );
-    points.push( new THREE.Vector3( 0, -64.25, 0 ) );
 
-    
-    const geometry = new THREE.BufferGeometry().setFromPoints( points );
-    
-    const line = new THREE.Line( geometry, material2 );
-    scene.add( line );
+    const points = [];
+    points.push(new THREE.Vector3(0, -64.25, 100));
+    points.push(new THREE.Vector3(0, -64.25, 0));
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const line = new THREE.Line(geometry, material2);
+    scene.add(line);
 
     //
 
@@ -136,45 +121,35 @@ function animate() {
 
 }
 
-function getDistance(inTorque) {
-    return inTorque * 3;
-}
-
 function render() {
 
-    // TODO: Change camera target here
-
-    /* targetPos.x++;
-    camera.position.x++; */
-    //console.log(input1Input.value);
-    
-    // TODO: change object positions, rotations, states, etc here
-    if (rotations <= (input1 * 2 * Math.PI)) {
+    if (speed == input1 && assembly.position.x > 0) {
+        assembly.position.x -= returnSpeed;
+        assembly.rotation.z += returnSpeed * 0.0156;
+        straw.position.x -= returnSpeed;
+        straw.rotation.y -= returnSpeed * 0.0156;
+    } else if (rotations <= (input1 * 2 * Math.PI)) {
         straw.rotation.y += 0.1;
         rotations += 0.1;
-    }
-    else if (rotations > (input1 * 2 * Math.PI) && input1 != null) {
+    } else if (rotations > (input1 * 2 * Math.PI) && input1 != null) {
         if (straw.rotation.y % (2 * Math.PI) > Math.acos(64.25 / 145)) {
             straw.rotation.y -= 0.05;
             distTraveled -= 0.05;
-        }
-        else if (distTraveled >= (-2) * Math.PI * input1) {
-            straw.position.x+=speed;
-            assembly.position.x+=speed;
+        } else if (distTraveled >= (-2) * Math.PI * input1) {
+            straw.position.x += speed;
+            assembly.position.x += speed;
             assembly.rotation.z -= speed * 0.0156;
             distTraveled -= speed * 0.0156;
-            
-            if(speed>0){
+
+            if (speed > 0) {
                 speed -= speedFac;
-            }  
+            }
         }
     }
 
-    document.getElementById("output").innerText = Math.round(assembly.position.x)/100 + " cm";
-    targetPos.x = assembly.position.x/2;
+    document.getElementById("output").innerText = Math.round(assembly.position.x) / 100 + " cm";
+    targetPos.x = assembly.position.x / 2;
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-
-    
 
     renderer.render(scene, camera);
 }
@@ -194,21 +169,11 @@ function submitInputs() {
     document.getElementById("output-text").style.visibility = "visible";
     document.getElementById("output").innerText = 0;
 
-
-    assembly.position.x = 0;
-    straw.position.x = 0;
     distTraveled = 0;
     rotations = 0;
-    assembly.rotation.z = 0;
-    straw.rotation.y = Math.acos(64.25 / 145);
 
-    input1 = clip(input1Input.value, input1Min, input1Max);
-    speed = Number(input1);
-    speedFac = speed/(((2) * Math.PI * input1)/(0.0156));
-    console.log(speed);
-    sendValues();
-}
-
-function sendValues() {
+    input1 = Number(clip(input1Input.value, input1Min, input1Max));
+    speed = input1;
+    speedFac = speed / (((2) * Math.PI * input1) / (0.0156));
     input1Input.value = Math.round(input1 * 100) / 100;
 }
