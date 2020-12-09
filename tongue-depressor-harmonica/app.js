@@ -325,13 +325,22 @@ function submitInputs() {
     tone = (921 * (Math.pow(0.977, sGapInput.value)));
     halfStep = (12 * Math.log(tone / initFreq)) / Math.log(2);
 
-    document.getElementById("Frequency").innerText = Math.floor(tone);
-    document.getElementById("Note").innerText = setNote();
+    document.getElementById("Frequency").innerText = "";
+    document.getElementById("Note").innerText = "";
+
+    if(sGapInput.value != 0)
+    {
+        document.getElementById("Frequency").innerText = Math.floor(tone);
+        document.getElementById("Note").innerText = setNote();
+    }
 
     // hertz of original sound = 338.63; 
 
     sound.detune += halfStep * 100;
-    sound.play();
+    if (sGapInput.value != 0)
+    {
+        sound.play();
+    }
     time = 0;
     slide = true;
     buzz = true;
