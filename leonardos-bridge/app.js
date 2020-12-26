@@ -56,10 +56,6 @@ function init() {
         //scene.add(templateStick);
         sticks = [];
         createSticks();
-        const sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
-const sphereMaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-scene.add( sphere );
         //can we add those to the group since those were defaults
         //scene.add(sticks[1]);
 
@@ -330,6 +326,7 @@ function changeBridge(numBlocks) {
         sticks[8].position.z += -1.5875;
         sticks[11].position.z += -1.5875;
         sticks[15].position.z += -1.5875;
+        heightChange == 137;
     }
     if (numBlocks == 1) {
         for (var i = 0; i < 21; i++) {
@@ -386,6 +383,8 @@ function changeBridge(numBlocks) {
         sticks[20].rotation.y -= 0.12875;
         sticks[20].position.z += 18;
         sticks[20].position.x += 7;
+
+        heightChange == 31;
     }
     if (numBlocks == 2) {
         for (var i = 0; i < 21; i++) {
@@ -442,6 +441,8 @@ function changeBridge(numBlocks) {
         sticks[20].rotation.y -= 0.2575;
         sticks[20].position.z += 37;
         sticks[20].position.x += 7;
+
+        heightChange = 64;
     }
     if (numBlocks == 3) {
         for (var i = 0; i < 21; i++) {
@@ -498,6 +499,8 @@ function changeBridge(numBlocks) {
         sticks[20].rotation.y -= 0.38625;
         sticks[20].position.z += 58;
         sticks[20].position.x += 7;
+
+        heightChange = 100
     }
     addWeight(numBlocks);
 
