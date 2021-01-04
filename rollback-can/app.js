@@ -10,6 +10,10 @@ var camera, scene, renderer, controls;
 
 var assembly;
 
+var rotations = 0;
+
+var distTraveled = 0;
+
 let targetPos = new THREE.Vector3(0, 0, 0);
 
 let input1Min = 0;
@@ -19,6 +23,7 @@ let input1Input = document.getElementById("input1");
 var x = 0;
 var move = false;
 let xReduction = 0.001;
+var speed = 1;
 
 let radius = 84.5;
 let circumference = 2 * Math.PI * radius;
@@ -113,7 +118,22 @@ function render() {
 
     assembly.position.x = getPosition(x);
     setRotation();
-
+    if (rotations <= (input1 * 2 * Math.PI)) {
+        straw.rotation.y += 0.1;
+        rotations += 0.1;
+    }
+    else if (rotations > (input1 * 2 * Math.PI) && input1 != null) {
+        if (distTraveled >= (-2) * Math.PI * input1) {
+            straw.position.x+=speed;
+            assembly.position.x+=speed;
+            assembly.rotation.z -= speed * 0.0156;
+            distTraveled -= speed * 0.0156;
+            
+            if(speed>0){
+                speed -= speedFac;
+            }  
+        }
+    }
     if (move && assembly.position.x == 0) {
         document.getElementById("output").innerText = 0;
         document.getElementById("output-text").style.visibility = "visible";
