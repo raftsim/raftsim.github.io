@@ -5,7 +5,7 @@ import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/Orb
 var container;
 var camera, scene, renderer, controls, listener, sound;
 
-var browser = get_browser(); 
+var browser = get_browser();
 
 let targetPos = new THREE.Vector3(0, 0, 0);
 
@@ -29,9 +29,12 @@ init();
 animate();
 
 function init() {
-    if ((browser.name === "Chrome" && browser.version < 44) || (browser.name === "Edge" && browser.version < 13) || (browser.name === "IE") || (browser.name === "Opera" && browser.version < 31) || (browser.name === "Safari"))
-    {
-        window.alert("Your browser may not be compatible with audio features of this simlation.");
+    if ((browser.name === "Chrome" && browser.version < 44) || (browser.name === "Edge" && browser.version < 13) || (browser.name === "IE") || (browser.name === "Opera" && browser.version < 31) || (browser.name === "Safari")) {
+        var confirm = window.confirm("Your browser may not be compatible with audio features of this simlation.");
+        console.log(confirm);
+        if (!confirm) {
+            window.location.href = '/';
+        }
     }
     container = document.createElement('div');
     container.id = "container";
@@ -328,8 +331,7 @@ function submitInputs() {
     document.getElementById("Frequency").innerText = "";
     document.getElementById("Note").innerText = "";
 
-    if(sGapInput.value != 0)
-    {
+    if (sGapInput.value != 0) {
         document.getElementById("Frequency").innerText = Math.floor(tone);
         document.getElementById("Note").innerText = setNote();
     }
@@ -337,8 +339,7 @@ function submitInputs() {
     // hertz of original sound = 338.63; 
 
     sound.detune += halfStep * 100;
-    if (sGapInput.value != 0)
-    {
+    if (sGapInput.value != 0) {
         sound.play();
     }
     time = 0;
@@ -347,20 +348,20 @@ function submitInputs() {
 }
 
 function get_browser() {
-    var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || []; 
-    if(/trident/i.test(M[1])){
-        tem=/\brv[ :]+(\d+)/g.exec(ua) || []; 
-        return {name:'IE',version:(tem[1]||'')};
-        }   
-    if(M[1]==='Chrome'){
-        tem=ua.match(/\bOPR|Edge\/(\d+)/)
-        if(tem!=null)   {return {name:'Opera', version:tem[1]};}
-        }   
-    M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
-    if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+    var ua = navigator.userAgent, tem, M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+    if (/trident/i.test(M[1])) {
+        tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+        return { name: 'IE', version: (tem[1] || '') };
+    }
+    if (M[1] === 'Chrome') {
+        tem = ua.match(/\bOPR|Edge\/(\d+)/)
+        if (tem != null) { return { name: 'Opera', version: tem[1] }; }
+    }
+    M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+    if ((tem = ua.match(/version\/(\d+)/i)) != null) { M.splice(1, 1, tem[1]); }
     return {
-      name: M[0],
-      version: M[1]
+        name: M[0],
+        version: M[1]
     };
- }
+}
 
