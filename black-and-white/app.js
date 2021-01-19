@@ -8,7 +8,8 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var cutout, assembly, ttop, btop;
+var assembly, ttop, btop, img, imgCol;
+var color = false;
 
 var angle = 0;
 var input1 = 0;
@@ -91,14 +92,6 @@ function init() {
 
 
     });
-    loader.load('objects/cutout.stl', function (geometry) {
-
-        cutout = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0x000000 }));
-        //scene.add(cutout);
-        cutout.rotation.x = -Math.PI
-        cutout.position.z -= 0.67;
-
-    });
 
     /*     // instantiate a loader
         var image_loader = new THREE.ImageBitmapLoader();
@@ -133,10 +126,14 @@ function init() {
             }
         ); */
 
-    var img = new THREE.MeshBasicMaterial({ //CHANGED to MeshBasicMaterial
+    img = new THREE.MeshBasicMaterial({ 
         map: THREE.ImageUtils.loadTexture('objects/benham-disk-pattern.png')
     });
-    img.map.needsUpdate = true; //ADDED
+    imgCol = new THREE.MeshBasicMaterial({ 
+        map: THREE.ImageUtils.loadTexture('objects/benham-disk-pattern(col).png')
+    });
+    img.map.needsUpdate = true; 
+    imgCol.map.needsUpdate = true; 
 
     ttop = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), img);
     ttop.overdraw = true;
@@ -152,7 +149,6 @@ function init() {
 
     btop.rotation.x = -Math.PI
     ttop.rotation.x = -Math.PI
-
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -208,13 +204,25 @@ function sendValues() {
 function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-    
+    if (angle >= 0.8 && color == false)
+    {
+        ttop.material = imgCol;
+        btop.material = imgCol;
+        color = true;
+    }
+    else if (angle < 0.8 && color == true)
+    {
+        ttop.material = img;
+        btop.material = img;
+        color = false;
+    }
+
     rot += angle;
     if (rot > 2 * Math.PI)
     {
         rot -= (2 * Math.PI);
     }
-    if (cutout != undefined && btop != undefined && ttop != undefined)
+    if (btop != undefined && ttop != undefined)
     {
         spin(rot);
     }
@@ -222,6 +230,7 @@ function render() {
         angle -= 0.001;
     else
         angle = 0
+    console.log(angle);
     /* document.getElementById("x").innerText = camera.position.x;
     document.getElementById("y").innerText = camera.position.y;
     document.getElementById("z").innerText = camera.position.z; */
@@ -232,7 +241,6 @@ function render() {
 function spin (num)
 {
     ttop.rotation.z = num;
-    cutout.rotation.z = num;
     btop.rotation.z = (2 *Math.PI) - num;
 }
 
