@@ -8,7 +8,14 @@ var container;
 
 var camera, scene, renderer, controls;
 
-var assembly, ttop, btop, img, imgCol;
+var assembly, ttop, btop, img, imgCol, tilt;
+
+let angleDec = 0.001;
+let defAngleThres = 0.9;
+var angleThres = defAngleThres;
+let maxTilt = Math.atan(1/15) * 2
+var tilt = 0;
+
 var color = false;
 
 var angle = 0;
@@ -42,10 +49,6 @@ function init() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.z = -40;
     camera.position.y = -123;
-    //
-    
-
-    // scene
 
     scene = new THREE.Scene();
 
@@ -60,80 +63,14 @@ function init() {
 
     var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-
-    /* loader.load('objects/black-and-white-cd.stl', function (geometry) {
-
-        disk = new THREE.Mesh(geometry, material);
-
-        scene.add(disk);
-
-    });
-
-    loader.load('objects/black-and-white-knob.stl', function (geometry) {
-
-        knob = new THREE.Mesh(geometry, material);
-
-        scene.add(knob);
-
-    });
-
-    loader.load('objects/black-and-white-marble.stl', function (geometry) {
-
-        marble = new THREE.Mesh(geometry, material);
-
-        scene.add(marble);
-
-    }); */
-    loader.load('objects/assembly.stl', function (geometry) {
-
-        assembly = new THREE.Mesh(geometry, material);
-        assembly.rotation.x = -Math.PI
-        scene.add(assembly);
-
-
-    });
-
-    /*     // instantiate a loader
-        var image_loader = new THREE.ImageBitmapLoader();
-    
-        // set options if needed
-        image_loader.setOptions({ imageOrientation: 'flipY' });
-    
-        // load a image resource
-        image_loader.load(
-            // resource URL
-            'objects/benham-disk-pattern.png',
-    
-            // onLoad callback
-            function (imageBitmap) {
-                var texture = new THREE.CanvasTexture(imageBitmap);
-                var img_material = new THREE.MeshBasicMaterial({ map: texture });
-                var circle_geometry = new THREE.CircleGeometry(4, 132); // radius, number of triangles making up circle (res)
-    
-                var img = new THREE.Mesh(circle_geometry, img_material);
-                img.position.y += 4;
-    
-                scene.add(img);
-            },
-    
-            // onProgress callback currently not supported
-            undefined,
-    
-            // onError callback
-            function (err) {
-                console.log('An error happened');
-                console.log(err);
-            }
-        ); */
+    let tLoader = new THREE.TextureLoader();
 
     img = new THREE.MeshBasicMaterial({ 
-        map: THREE.ImageUtils.loadTexture('objects/benham-disk-pattern.png')
+        map: tLoader.load('objects/benham-disk-pattern.png')
     });
     imgCol = new THREE.MeshBasicMaterial({ 
-        map: THREE.ImageUtils.loadTexture('objects/benham-disk-pattern(col).png')
+        map: tLoader.load('objects/benham-disk-pattern(col).png')
     });
-    img.map.needsUpdate = true; 
-    imgCol.map.needsUpdate = true; 
 
     ttop = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), img);
     ttop.overdraw = true;
@@ -142,29 +79,32 @@ function init() {
 
     btop = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), img);
     btop.overdraw = true;
-    btop.position.z -= 7.9;
+    btop.position.z -= 7.8;
     btop.rotation.y = Math.PI;
     btop.scale.x = -1;
     scene.add(btop);
 
     btop.rotation.x = -Math.PI
     ttop.rotation.x = -Math.PI
+
+    loader.load('objects/assembly.stl', function (geometry) {
+        assembly = new THREE.Mesh(geometry, material);
+        assembly.rotation.x = -Math.PI
+        scene.add(assembly);
+        assembly.attach(btop);
+        assembly.attach(ttop);
+    });
+
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
-
-    // orbit controls
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0, 0);
     controls.update();
     controls.enablePan = false;
     controls.enableDamping = true;
-    /* controls.minPolarAngle = controls.minAzimuthAngle;
-    controls.maxPolarAngle = controls.maxAzimuthAngle; */
-
-    //
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -193,6 +133,8 @@ function submitInputs() {
     input1 = clip(Number(input1Input.value), input1Min, input1Max);
     input2 = clip(Number(input2Input.value), input2Min, input2Max);
     angle = input1;
+    tilt = 0;
+    angleThres = (angle < defAngleThres) ? angle : defAngleThres
     sendValues();
 }
 
@@ -204,17 +146,24 @@ function sendValues() {
 function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-    if (angle >= input2 && color == false)
+    if (angle >= angleThres && color == false)
     {
         ttop.material = imgCol;
         btop.material = imgCol;
         color = true;
     }
-    else if (angle < input2 && color == true)
+    else if (angle < angleThres && angle > 0)
     {
-        ttop.material = img;
-        btop.material = img;
-        color = false;
+        if (color == true)
+        {
+            ttop.material = img;
+            btop.material = img;
+            color = false;
+        }
+        if (tilt < maxTilt)
+        {
+            tilt += maxTilt/(angleThres/angleDec);
+        }
     }
 
     rot += angle;
@@ -222,26 +171,17 @@ function render() {
     {
         rot -= (2 * Math.PI);
     }
-    if (btop != undefined && ttop != undefined)
+    if (assembly != undefined)
     {
-        spin(rot);
+        assembly.rotation.z = rot;
+        assembly.rotation.x = tilt * Math.cos(rot) - Math.PI;
+        assembly.rotation.y = tilt * Math.sin(rot);
     }
     if (angle > 0)
-        angle -= 0.001;
+        angle -= angleDec;
     else
-        angle = 0
-    console.log(angle);
-    /* document.getElementById("x").innerText = camera.position.x;
-    document.getElementById("y").innerText = camera.position.y;
-    document.getElementById("z").innerText = camera.position.z; */
+        angle = 0;
     renderer.render(scene, camera);
-    
-}
-
-function spin (num)
-{
-    ttop.rotation.z = num;
-    btop.rotation.z = (2 *Math.PI) - num;
 }
 
 function clip(input, limit1, limit2) {
