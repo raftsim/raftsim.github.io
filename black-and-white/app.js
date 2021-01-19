@@ -17,8 +17,8 @@ var input2;
 let input1Min = 0;
 let input1Max = 3;
 
-let input2Min = 100;
-let input2Max = 199;
+let input2Min = 0.3;
+let input2Max = 3;
 
 let input1Input = document.getElementById("input1");
 let input2Input = document.getElementById("input2");
@@ -191,7 +191,7 @@ function animate() {
 
 function submitInputs() {
     input1 = clip(Number(input1Input.value), input1Min, input1Max);
-    input2 = clip(input2Input.value, input2Min, input2Max);
+    input2 = clip(Number(input2Input.value), input2Min, input2Max);
     angle = input1;
     sendValues();
 }
@@ -204,13 +204,13 @@ function sendValues() {
 function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-    if (angle >= 0.8 && color == false)
+    if (angle >= input2 && color == false)
     {
         ttop.material = imgCol;
         btop.material = imgCol;
         color = true;
     }
-    else if (angle < 0.8 && color == true)
+    else if (angle < input2 && color == true)
     {
         ttop.material = img;
         btop.material = img;
