@@ -24,6 +24,7 @@ animate();
 
 function init() {
 
+    document.getElementById("submit").style.visibility = "hidden";
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
@@ -141,6 +142,8 @@ function createSticks() {
 
     group.rotation.x = -1.5707963268;
     scene.add(group);
+
+    document.getElementById("submit").style.visibility = "visible";
 }
 
 function resetSticks() {
