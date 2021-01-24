@@ -31,11 +31,11 @@ animate();
 function init() {
     if ((browser.name === "Chrome" && browser.version < 44) || (browser.name === "Edge" && browser.version < 13) || (browser.name === "IE") || (browser.name === "Opera" && browser.version < 31) || (browser.name === "Safari")) {
         var confirm = window.confirm("Your browser may not be compatible with audio features of this simlation.");
-        console.log(confirm);
         if (!confirm) {
             window.location.href = '/';
         }
     }
+
     container = document.createElement('div');
     container.id = "container";
     document.body.appendChild(container);
@@ -233,12 +233,9 @@ function render() {
             sliderR.position.x++;
         } else if (sliderR.position.x > Math.floor(sGapInput.value / 2 + 8.6)) {
             sliderR.position.x--;
-
         }
 
         if (sliderR.position.x == Math.floor(sGapInput.value / 2 + 8.6)) {
-            console.log(sliderL.position.x);
-            console.log(sliderR.position.x);
             sound.detune = 0;
             slide = false;
         }
@@ -300,7 +297,6 @@ function setNote() {
         }
     }
 
-
     var notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     for (var i = 0; i < 12; i++) {
         if (note == i) {
@@ -342,9 +338,11 @@ function submitInputs() {
     // hertz of original sound = 338.63; 
 
     sound.detune += halfStep * 100;
+
     if (sGapInput.value != 0) {
         sound.play();
     }
+
     time = 0;
     slide = true;
     buzz = true;
