@@ -13,9 +13,7 @@ var templateStick, sticks, group, templateWeight, weights;
 let targetPos = new THREE.Vector3(0, 0, 0);
 
 var input1;
-
 let input1Min = 0;
-
 let input1Input = document.getElementById("input1");
 
 let blockWeight = 0.5;
@@ -53,11 +51,9 @@ function init() {
 
     function loadModel() {
 
-        //scene.add(templateStick);
         sticks = [];
+        weights = [];
         createSticks();
-        //can we add those to the group since those were defaults
-        //scene.add(sticks[1]);
 
     }
 
@@ -68,8 +64,6 @@ function init() {
         console.log(item, loaded, total);
 
     };
-
-    // the thing you just said a second ago
 
     function onProgress(xhr) {
 
@@ -87,12 +81,12 @@ function init() {
     {
         var loader = new OBJLoader(manager);
 
-        loader.load('objects/stick.obj', function (obj) { // EXAMPLE CODE
+        loader.load('objects/stick.obj', function (obj) {
 
             templateStick = obj;
 
         }, onProgress, onError);
-        loader.load('objects/weight.obj', function (obj) { // EXAMPLE CODE
+        loader.load('objects/weight.obj', function (obj) {
 
             templateWeight = obj;
 
@@ -129,12 +123,9 @@ function onWindowResize() {
 
 }
 
-// is there a way to change the point of origion of the camera
 function createSticks() {
     scene.remove(group);
-    /* for (var i = 0; i < sticks.length; i++) {
-        scene.remove(sticks[i]);
-    } */
+
     group = new THREE.Group();
     sticks = [];
 
@@ -143,129 +134,135 @@ function createSticks() {
         newStick.position.x = 230 * (i + 1);
 
         sticks.push(newStick);
-        //console.log(sticks[i].position.x);
         group.add(sticks[i]);
     }
 
-    {
-        sticks[14].position.x = 0;
+    resetSticks();
 
-        sticks[0].position.x = -115;
-        sticks[0].position.z += -6.35;
-        sticks[0].rotation.y -= 0.07;
-
-        sticks[1].rotation.z += 1.5707963268;
-        sticks[1].position.x = 0;
-        sticks[1].position.y += 101.5;
-        sticks[1].position.z += -3.175;
-
-        sticks[2].rotation.z += 1.5707963268;
-        sticks[2].position.x = 0;
-        sticks[2].position.y -= 101.5;
-        sticks[2].position.z += -3.175;
-
-        sticks[3].position.x = 115;
-        sticks[3].position.z += -6.35;
-        sticks[3].rotation.y += 0.07;
-
-        sticks[4].rotation.z += 1.5707963268;
-        sticks[4].position.x = 115;
-        sticks[4].position.y += 74.5;
-        sticks[4].position.z -= 12;
-        sticks[4].rotation.y += 0.145;
-
-        sticks[5].rotation.z += 1.5707963268;
-        sticks[5].position.x = 115;
-        sticks[5].position.y -= 74.5;
-        sticks[5].position.z -= 12;
-        sticks[5].rotation.y += 0.145;
-
-        sticks[6].rotation.z += 1.5707963268;
-        sticks[6].position.x = -115;
-        sticks[6].position.y -= 74.5;
-        sticks[6].position.z -= 12;
-        sticks[6].rotation.y += -0.145;
-
-        sticks[7].rotation.z += 1.5707963268;
-        sticks[7].position.x = -115;
-        sticks[7].position.y += 74.5;
-        sticks[7].position.z -= 12;
-        sticks[7].rotation.y += -0.145;
-
-        sticks[8].position.x = -230;
-        sticks[8].position.z += -6.35;
-        sticks[8].position.z -= 26;
-        sticks[8].rotation.y += -0.145;
-
-        sticks[9].rotation.z += 1.5707963268;
-        sticks[9].position.x = -230;
-        sticks[9].position.y += 101.5;
-        sticks[9].position.z += -38.5;
-        sticks[9].rotation.y += -0.34;
-
-        sticks[10].rotation.z += 1.5707963268;
-        sticks[10].position.x = -230;
-        sticks[10].position.y -= 101.5;
-        sticks[10].position.z += -38.5;
-        sticks[10].rotation.y += -0.34;
-
-        sticks[11].position.x = -345;
-        sticks[11].position.z += -6.35;
-        sticks[11].position.z -= 77;
-        sticks[11].rotation.y += -0.4;
-
-        sticks[12].rotation.z += 1.5707963268;
-        sticks[12].position.x = -331.5;
-        sticks[12].position.y -= 74.5;
-        sticks[12].position.z -= 81;
-        sticks[12].rotation.y += -0.515;
-
-        sticks[13].rotation.z += 1.5707963268;
-        sticks[13].position.x = -331.5;
-        sticks[13].position.y += 74.5;
-        sticks[13].position.z -= 81;
-        sticks[13].rotation.y += -0.515;
-
-        sticks[15].position.x = 230;
-        sticks[15].position.z += -6.35;
-        sticks[15].position.z -= 26;
-        sticks[15].rotation.y += 0.145;
-        group.rotation.x -= 1.5707963268;
-        scene.add(group);
-        sticks[16].rotation.z += 1.5707963268;
-        sticks[16].position.x = 230;
-        sticks[16].position.y += 101.5;
-        sticks[16].position.z += -38.5;
-        sticks[16].rotation.y += 0.34;
-
-        sticks[17].rotation.z += 1.5707963268;
-        sticks[17].position.x = 230;
-        sticks[17].position.y -= 101.5;
-        sticks[17].position.z += -38.5;
-        sticks[17].rotation.y += 0.34;
-
-        sticks[18].position.x = 345;
-        sticks[18].position.z += -6.35;
-        sticks[18].position.z -= 77;
-        sticks[18].rotation.y += 0.4;
-
-        sticks[19].rotation.z += -1.5707963268;
-        sticks[19].position.x = 331.5;
-        sticks[19].position.y -= 74.5;
-        sticks[19].position.z -= 81;
-        sticks[19].rotation.y += 0.515;
-
-        sticks[20].rotation.z += -1.5707963268;
-        sticks[20].position.x = 331.5;
-        sticks[20].position.y += 74.5;
-        sticks[20].position.z -= 81;
-        sticks[20].rotation.y += 0.515;
-    }
+    group.rotation.x = -1.5707963268;
+    scene.add(group);
 }
+
+function resetSticks() {
+    
+    sticks[0].position.x = -115;
+    sticks[0].position.z = -6.35;
+    sticks[0].rotation.y = -0.07;
+    
+    sticks[1].rotation.z = 1.5707963268;
+    sticks[1].position.x = 0;
+    sticks[1].position.y = 101.5;
+    sticks[1].position.z = -3.175;
+    
+    sticks[2].rotation.z = 1.5707963268;
+    sticks[2].position.x = 0;
+    sticks[2].position.y = -101.5;
+    sticks[2].position.z = -3.175;
+    
+    sticks[3].position.x = 115;
+    sticks[3].position.z = -6.35;
+    sticks[3].rotation.y = 0.07;
+    
+    sticks[4].rotation.z = 1.5707963268;
+    sticks[4].position.x = 115;
+    sticks[4].position.y = 74.5;
+    sticks[4].position.z = -12;
+    sticks[4].rotation.y = 0.145;
+    
+    sticks[5].rotation.z = 1.5707963268;
+    sticks[5].position.x = 115;
+    sticks[5].position.y = -74.5;
+    sticks[5].position.z = -12;
+    sticks[5].rotation.y = 0.145;
+    
+    sticks[6].rotation.z = 1.5707963268;
+    sticks[6].position.x = -115;
+    sticks[6].position.y = -74.5;
+    sticks[6].position.z = -12;
+    sticks[6].rotation.y = -0.145;
+    
+    sticks[7].rotation.z = 1.5707963268;
+    sticks[7].position.x = -115;
+    sticks[7].position.y = 74.5;
+    sticks[7].position.z = -12;
+    sticks[7].rotation.y = -0.145;
+    
+    sticks[8].position.x = -230;
+    sticks[8].position.z = -6.35;
+    sticks[8].position.z = -26;
+    sticks[8].rotation.y = -0.145;
+    
+    sticks[9].rotation.z = 1.5707963268;
+    sticks[9].position.x = -230;
+    sticks[9].position.y = 101.5;
+    sticks[9].position.z = -38.5;
+    sticks[9].rotation.y = -0.34;
+    
+    sticks[10].rotation.z = 1.5707963268;
+    sticks[10].position.x = -230;
+    sticks[10].position.y = -101.5;
+    sticks[10].position.z = -38.5;
+    sticks[10].rotation.y = -0.34;
+    
+    sticks[11].position.x = -345;
+    sticks[11].position.z = -6.35;
+    sticks[11].position.z = -77;
+    sticks[11].rotation.y = -0.4;
+    
+    sticks[12].rotation.z = 1.5707963268;
+    sticks[12].position.x = -331.5;
+    sticks[12].position.y = -74.5;
+    sticks[12].position.z = -81;
+    sticks[12].rotation.y = -0.515;
+    
+    sticks[13].rotation.z = 1.5707963268;
+    sticks[13].position.x = -331.5;
+    sticks[13].position.y = 74.5;
+    sticks[13].position.z = -81;
+    sticks[13].rotation.y = -0.515;
+    
+    sticks[14].position.x = 0;
+    sticks[14].position.z = 0;
+    
+    sticks[15].position.x = 230;
+    sticks[15].position.z = -6.35;
+    sticks[15].position.z = -26;
+    sticks[15].rotation.y = 0.145;
+
+    sticks[16].rotation.z = 1.5707963268;
+    sticks[16].position.x = 230;
+    sticks[16].position.y = 101.5;
+    sticks[16].position.z = -38.5;
+    sticks[16].rotation.y = 0.34;
+
+    sticks[17].rotation.z = 1.5707963268;
+    sticks[17].position.x = 230;
+    sticks[17].position.y = -101.5;
+    sticks[17].position.z = -38.5;
+    sticks[17].rotation.y = 0.34;
+
+    sticks[18].position.x = 345;
+    sticks[18].position.z = -6.35;
+    sticks[18].position.z = -77;
+    sticks[18].rotation.y = 0.4;
+
+    sticks[19].rotation.z = -1.5707963268;
+    sticks[19].position.x = 331.5;
+    sticks[19].position.y = -74.5;
+    sticks[19].position.z = -81;
+    sticks[19].rotation.y = 0.515;
+
+    sticks[20].rotation.z = -1.5707963268;
+    sticks[20].position.x = 331.5;
+    sticks[20].position.y = 74.5;
+    sticks[20].position.z = -81;
+    sticks[20].rotation.y = 0.515;
+}
+
 // 0.25 kg - decreases by abt 30%
 // 0.5kg - decreases by abt 50%
 // 0.75kg - decreases by abt 70%
-//1kg - brings the whole thing down
+// 1kg - brings the whole thing down
 function animate() {
 
     requestAnimationFrame(animate);
@@ -276,12 +273,9 @@ function animate() {
 
 function render() {
 
-    // thank u sir
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-
-    // TODO: change object positions, rotations, states, etc here
-
     renderer.render(scene, camera);
+
 }
 
 function clip(input, limit1) {
@@ -291,6 +285,7 @@ function clip(input, limit1) {
         return Math.floor(input);
     }
 }
+
 function submitInputs() {
     document.getElementById("output-text1").style.visibility = "hidden";
     document.getElementById("output-text2").style.visibility = "hidden";
@@ -301,37 +296,19 @@ function submitInputs() {
 }
 
 function sendValues() {
-    input1Input.value = Math.round(input1 * 100) / 100;
-    changeBridge(input1Input.value);
-    //stuff
+    input1Input.value = Math.round(input1);
+    changeBridge(input1);
 }
+
 function changeBridge(numBlocks) {
-    var heightChange = 20; //TODO: find the heightchange
+    var heightChange = 0;
+    resetSticks();
 
-    if (numBlocks >= 4) {
-        for (var i = 0; i < 21; i++) {
-            sticks[i].rotation.y = 0;
-            sticks[i].position.z = -90;
-        }
-        sticks[1].position.z += -3.175;
-        sticks[2].position.z += -3.175;
-        sticks[9].position.z += -3.175;
-        sticks[10].position.z += -3.175;
-        sticks[16].position.z += -3.175;
-        sticks[17].position.z += -3.175;
-
-        sticks[0].position.z += 1.5875;
-        sticks[14].position.z += 1.5875;
-        sticks[3].position.z += -1.5875;
-        sticks[8].position.z += -1.5875;
-        sticks[11].position.z += -1.5875;
-        sticks[15].position.z += -1.5875;
-        heightChange == 137;
-    }
     if (numBlocks == 1) {
         for (var i = 0; i < 21; i++) {
-            sticks[i].position.z -=30;
+            sticks[i].position.z -= 30;
         }
+
         sticks[4].rotation.y -= 0.03625;
         sticks[4].position.z += 4.5;
 
@@ -384,12 +361,12 @@ function changeBridge(numBlocks) {
         sticks[20].position.z += 18;
         sticks[20].position.x += 7;
 
-        heightChange == 31;
-    }
-    if (numBlocks == 2) {
+        heightChange = 31;
+    } else if (numBlocks == 2) {
         for (var i = 0; i < 21; i++) {
-            sticks[i].position.z -=50;
+            sticks[i].position.z -= 50;
         }
+
         sticks[4].rotation.y -= 0.0725;
         sticks[4].position.z += 5.5;
 
@@ -443,11 +420,11 @@ function changeBridge(numBlocks) {
         sticks[20].position.x += 7;
 
         heightChange = 64;
-    }
-    if (numBlocks == 3) {
+    } else if (numBlocks == 3) {
         for (var i = 0; i < 21; i++) {
-            sticks[i].position.z -=75;
+            sticks[i].position.z -= 75;
         }
+
         sticks[4].rotation.y -= 0.10875;
         sticks[4].position.z += 8;
 
@@ -501,16 +478,42 @@ function changeBridge(numBlocks) {
         sticks[20].position.x += 7;
 
         heightChange = 100
+    } else if (numBlocks >= 4) {
+        for (var i = 0; i < 21; i++) {
+            sticks[i].rotation.y = 0;
+            sticks[i].position.z = -90;
+        }
+
+        sticks[1].position.z += -3.175;
+        sticks[2].position.z += -3.175;
+        sticks[9].position.z += -3.175;
+        sticks[10].position.z += -3.175;
+        sticks[16].position.z += -3.175;
+        sticks[17].position.z += -3.175;
+
+        sticks[0].position.z += 1.5875;
+        sticks[14].position.z += 1.5875;
+        sticks[3].position.z += -1.5875;
+        sticks[8].position.z += -1.5875;
+        sticks[11].position.z += -1.5875;
+        sticks[15].position.z += -1.5875;
+        heightChange = 137;
     }
+
     addWeight(numBlocks);
 
-    document.getElementById("output1").innerText = Math.round(heightChange)/10 + "cm";
+    document.getElementById("output1").innerText = Math.round(heightChange) / 10 + "cm";
     document.getElementById("output2").innerText = Math.round((100 * blockWeight * numBlocks) / bridgeWeight) / 100;
     document.getElementById("output-text1").style.visibility = "visible";
     document.getElementById("output-text2").style.visibility = "visible";
-    
+
 }
+
 function addWeight(numBlocks) {
+    weights.forEach(item => {
+        group.remove(item);
+    });
+
     weights = [];
     for (var i = 0; i < numBlocks; i++) {
         var newWeight = templateWeight.clone(true);
@@ -521,26 +524,21 @@ function addWeight(numBlocks) {
         weights.push(newWeight);
         group.add(weights[i]);
     }
+
     var starty = -75;
     if (numBlocks >= 4) {
         var startz = -60;
-    }
-    else if (numBlocks == 3){
+    } else if (numBlocks == 3) {
         var startz = -47;
-    }
-    else if (numBlocks == 2){
+    } else if (numBlocks == 2) {
         var startz = -22
-    }
-    else if (numBlocks == 1) {
+    } else if (numBlocks == 1) {
         var startz = -2;
     }
-    console.log(weights.length);
-    console.log(numBlocks);
-    //I can just use math.floor and the
+
     for (var i = 0; i < (numBlocks / 4); i++) {
         for (var j = 0; j < 4; j++) {
-            //if (weights[(i * 4) + j] == null) { break; }
-            console.log((i * 4) + j);
+
             try {
                 weights[(i * 4) + j].position.y = starty;
                 weights[(i * 4) + j].position.z = startz;
@@ -552,30 +550,28 @@ function addWeight(numBlocks) {
         startz += 50;
         starty = -75;
     }
-    // the one on top should be in the middle since i set the position to 0
+
     if (numBlocks % 4 == 1) {
         weights[numBlocks - 1].position.y = 0;
-        if ((numBlocks/4) > 1)
-        {
+        if ((numBlocks / 4) > 1) {
             weights[numBlocks - 1].position.z -= 8;
         }
     }
 
-    if (numBlocks % 4 == 2){
+    if (numBlocks % 4 == 2) {
         weights[numBlocks - 1].position.y = 25;
         weights[numBlocks - 2].position.y = -25;
     }
-    if (numBlocks % 4 == 3){
+
+    if (numBlocks % 4 == 3) {
         weights[numBlocks - 1].position.y = 50;
         weights[numBlocks - 2].position.y = 0;
         weights[numBlocks - 3].position.y = -50;
-        if ((numBlocks/4) > 1)
-        {
+
+        if ((numBlocks / 4) > 1) {
             weights[numBlocks - 1].position.z -= 8;
             weights[numBlocks - 2].position.z -= 8;
             weights[numBlocks - 3].position.z -= 8;
         }
     }
-
 }
-//no
