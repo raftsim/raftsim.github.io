@@ -244,11 +244,11 @@ function render() {
         }
     }
 
-    if (buzz) {
+    if (buzz && !slide) {
         if (time < 15) {
             time += 0.1;
         } else {
-            sound.pause();
+            sound.stop();
             buzz = false;
         }
     }
@@ -319,7 +319,10 @@ function setNote() {
 }
 
 function submitInputs() {
-    sound.pause();
+    if (sound.isPlaying) {
+        sound.stop();
+    }
+
     document.getElementById("output-text").style.visibility = "hidden";
 
     input1 = clip(sGapInput.value, sGapMin, sGapMax);
