@@ -1,37 +1,26 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-
 import { STLLoader } from 'https://unpkg.com/three/examples/jsm/loaders/STLLoader.js';
-
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 var container;
-
 var camera, scene, renderer, controls;
-
 var assembly, ttop, btop, img, imgCol, tilt;
 
 let angleDec = 0.001;
 let defAngleThres = 0.9;
 var angleThres = defAngleThres;
-let maxTilt = Math.atan(1/15) * 2
+let maxTilt = Math.atan(1 / 15) * 2
 var tilt = 0;
 
 var color = false;
 
+var rot = 0;
 var angle = 0;
 var input1 = 0;
-var input2;
 let input1Min = 0;
 let input1Max = 3;
 
-let input2Min = 0.3;
-let input2Max = 3;
-
 let input1Input = document.getElementById("input1");
-let input2Input = document.getElementById("input2");
-
-var rot = 0;
-
 let targetPos = new THREE.Vector3(0, 0, 0);
 
 init();
@@ -59,16 +48,15 @@ function init() {
     camera.add(pointLight);
     scene.add(camera);
 
-    var loader = new STLLoader();
-
-    var material = new THREE.MeshPhongMaterial({ color: 0xffffff });
-
+    let loader = new STLLoader();
     let tLoader = new THREE.TextureLoader();
+    let material = new THREE.MeshPhongMaterial({ color: 0xffffff });
 
-    img = new THREE.MeshBasicMaterial({ 
+    img = new THREE.MeshBasicMaterial({
         map: tLoader.load('objects/benham-disk-pattern.png')
     });
-    imgCol = new THREE.MeshBasicMaterial({ 
+
+    imgCol = new THREE.MeshBasicMaterial({
         map: tLoader.load('objects/benham-disk-pattern(col).png')
     });
 
@@ -84,8 +72,8 @@ function init() {
     btop.scale.x = -1;
     scene.add(btop);
 
-    btop.rotation.x = -Math.PI
-    ttop.rotation.x = -Math.PI
+    btop.rotation.x = -Math.PI;
+    ttop.rotation.x = -Math.PI;
 
     loader.load('objects/assembly.stl', function (geometry) {
         assembly = new THREE.Mesh(geometry, material);
@@ -131,7 +119,6 @@ function animate() {
 
 function submitInputs() {
     input1 = clip(Number(input1Input.value), input1Min, input1Max);
-    input2 = clip(Number(input2Input.value), input2Min, input2Max);
     angle = input1;
     tilt = 0;
     angleThres = (angle < defAngleThres) ? angle : defAngleThres
@@ -140,47 +127,45 @@ function submitInputs() {
 
 function sendValues() {
     input1Input.value = Math.round(input1 * 100) / 100;
-    input2Input.value = Math.round(input2 * 100) / 100;
 }
 
 function render() {
 
     controls.target.set(targetPos.x, targetPos.y, targetPos.z);
-    if (angle >= angleThres && color == false)
-    {
+
+    if (angle >= angleThres && color == false) {
         ttop.material = imgCol;
         btop.material = imgCol;
         color = true;
-    }
-    else if (angle < angleThres && angle > 0)
-    {
-        if (color == true)
-        {
+    } else if (angle < angleThres && angle > 0) {
+        if (color == true) {
             ttop.material = img;
             btop.material = img;
             color = false;
         }
-        if (tilt < maxTilt)
-        {
-            tilt += maxTilt/(angleThres/angleDec);
+
+        if (tilt < maxTilt) {
+            tilt += maxTilt / (angleThres / angleDec);
         }
     }
 
     rot += angle;
-    if (rot > 2 * Math.PI)
-    {
+    if (rot > 2 * Math.PI) {
         rot -= (2 * Math.PI);
     }
-    if (assembly != undefined)
-    {
+
+    if (assembly != undefined) {
         assembly.rotation.z = rot;
         assembly.rotation.x = tilt * Math.cos(rot) - Math.PI;
         assembly.rotation.y = tilt * Math.sin(rot);
     }
-    if (angle > 0)
+
+    if (angle > 0) {
         angle -= angleDec;
-    else
+    } else {
         angle = 0;
+    }
+
     renderer.render(scene, camera);
 }
 
