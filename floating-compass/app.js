@@ -20,7 +20,7 @@ var group = new THREE.Group();
 var magnetNorth;
 var magnetSouth;
 
-var currentRot, currentOrbit, targetOrbit;
+var currentRot, assemblyRot, currentOrbit, targetOrbit;
 var targetRot = 0;
 
 init();
@@ -130,19 +130,33 @@ function render() {
 
     var speed = 0.02;
     currentRot = group.rotation.y;
+    assemblyRot = assembly.rotation.z;
 
-    if (Math.abs(currentRot - targetRot) >= speed) {
 
-        if (currentRot > targetRot) {
-            currentRot -= speed;
-        } else if (currentRot < targetRot) {
-            currentRot += speed;
+    if (Math.abs(currentRot - targetRot) >= speed || Math.abs(assemblyRot - currentRot) >= speed) {
+        if (Math.abs(currentRot - targetRot) >= speed) {
+
+            if (currentRot > targetRot) {
+                currentRot -= speed;
+            } else if (currentRot < targetRot) {
+                currentRot += speed;
+            }
+            
+            group.rotation.y = currentRot;
         }
-
-        group.rotation.y = currentRot;
-
-    } else if (Math.abs(currentOrbit - targetOrbit) >= speed) {
         
+        if (Math.abs(assemblyRot - currentRot) >= speed) {
+            
+            if (assemblyRot > currentRot) {
+                assemblyRot -= speed;
+            } else if (assemblyRot < currentRot) {
+                assemblyRot += speed;
+            }
+            
+            assembly.rotation.z = assemblyRot;
+        }
+    } else if (Math.abs(currentOrbit - targetOrbit) >= speed) {
+
         if (currentOrbit > targetOrbit) {
             currentOrbit -= speed;
             currentRot -= speed;
@@ -157,13 +171,6 @@ function render() {
         group.position.x = Math.sin(currentOrbit) * 4;
         group.position.z = Math.cos(currentOrbit) * 4;
 
-    } else if (Math.abs(assembly.rotation.z - currentRot) >= speed) {
-        
-        if (assembly.rotation.z > currentRot) {
-            assembly.rotation.z -= speed;
-        } else if (assembly.rotation.z < currentRot) {
-            assembly.rotation.z += speed;
-        }
     }
 
     renderer.render(scene, camera);
@@ -209,5 +216,4 @@ function submitInputs() {
 
     targetOrbit = -1 * input1 * (Math.PI / 180);
     targetRot = input2 ? targetRot - Math.PI : targetRot;
-    targetRot %= Math.PI;
 }
