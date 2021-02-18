@@ -37,8 +37,8 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
     camera.position.x = -6;
-    camera.position.y = 9;
-    camera.position.z = 9;
+    camera.position.y = 12;
+    camera.position.z = 12;
 
     // scene
 
@@ -51,10 +51,12 @@ function init() {
     camera.add(pointLight);
     scene.add(camera);
 
-    var loader = new STLLoader();
+    let loader = new STLLoader();
 
-    var materialWhite = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
-    var materialRed = new THREE.MeshPhongMaterial({ color: 0xFF0000 });
+    let materialWhite = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
+    let materialRed = new THREE.MeshPhongMaterial({ color: 0xFF0000 });
+    let materialGray = new THREE.MeshBasicMaterial({ color: 0xAAAAAA });
+    let lineMaterial = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
 
     loader.load('objects/assembly.stl', function (geometry) {
 
@@ -78,6 +80,74 @@ function init() {
         magnetSouth.position.z = -1.99;
 
     });
+
+    let unitCircleGroup = new THREE.Group();
+    let unitCircleRadius = 5.99;
+
+    var circleGeometry = new THREE.CircleGeometry(unitCircleRadius, 64);
+    
+    var circleTop = new THREE.Mesh(circleGeometry, materialGray);
+    circleTop.rotation.x = -Math.PI / 2;
+    circleTop.position.y = -0.01;
+
+    var circleBottom = new THREE.Mesh(circleGeometry, materialGray);
+    circleBottom.rotation.x = Math.PI / 2;
+    circleBottom.position.y = circleTop.position.y;
+
+    unitCircleGroup.add(circleTop);
+    unitCircleGroup.add(circleBottom);
+
+    var fontLoader = new THREE.FontLoader();
+    fontLoader.load('https://unpkg.com/three/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+        var degree = 0;
+        var radian = 0;
+
+        var textGroup = new THREE.Group();
+        var textSettings = {
+            font: font,
+            size: 0.5,
+            height: 0.1,
+            curveSegments: 12,
+            bevelEnabled: false,
+            bevelThickness: 1,
+            bevelSize: 1,
+            bevelOffset: 0,
+            bevelSegments: 5
+        }
+
+        while (degree <= 330) {
+            if (degree % 45 != 0 && degree % 30 != 0) {
+                degree += 15;
+            }
+            radian = degree / 180 * Math.PI;
+
+            if (degree < 180) {
+                var linePoints = [];
+                linePoints.push(new THREE.Vector3(unitCircleRadius * Math.cos(radian), 0, unitCircleRadius * Math.sin(radian)));
+                linePoints.push(new THREE.Vector3(unitCircleRadius * Math.cos(radian + Math.PI), 0, unitCircleRadius * Math.sin(radian + Math.PI)));
+                var lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+                var line = new THREE.Line(lineGeometry, lineMaterial);
+                unitCircleGroup.add(line);
+            }
+
+            var textGeometry = new THREE.TextGeometry(degree + "°", textSettings);
+            var textMesh = new THREE.Mesh(textGeometry, materialWhite);
+
+            textMesh.position.y = -(unitCircleRadius + 1) * Math.cos(radian);
+            textMesh.position.x = -(unitCircleRadius + 1) * Math.sin(radian);
+            textMesh.rotation.z = -radian;
+
+            textGroup.add(textMesh);
+
+            degree += 15;
+        }
+
+        textGroup.rotation.x = Math.PI * 3 / 2;
+        unitCircleGroup.add(textGroup);
+    });
+
+    unitCircleGroup.position.y = -0.1;
+    scene.add(unitCircleGroup);
 
     // movement
 
@@ -141,18 +211,18 @@ function render() {
             } else if (currentRot < targetRot) {
                 currentRot += speed;
             }
-            
+
             group.rotation.y = currentRot;
         }
-        
+
         if (Math.abs(assemblyRot - currentRot) >= speed) {
-            
+
             if (assemblyRot > currentRot) {
                 assemblyRot -= speed;
             } else if (assemblyRot < currentRot) {
                 assemblyRot += speed;
             }
-            
+
             assembly.rotation.z = assemblyRot;
         }
     } else if (Math.abs(currentOrbit - targetOrbit) >= speed) {
