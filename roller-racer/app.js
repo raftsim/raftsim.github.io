@@ -17,7 +17,6 @@ let input1Max = 99;
 
 var speedFac = 0;
 var speed = 1;
-let returnSpeed = 4;
 
 let input1Input = document.getElementById("input1");
 
@@ -123,12 +122,7 @@ function animate() {
 
 function render() {
 
-    if (speed == input1 && assembly.position.x > 0) {
-        assembly.position.x -= returnSpeed;
-        assembly.rotation.z += returnSpeed * 0.0156;
-        straw.position.x -= returnSpeed;
-        straw.rotation.y -= returnSpeed * 0.0156;
-    } else if (rotations <= (input1 * 2 * Math.PI)) {
+    if (rotations <= (input1 * 2 * Math.PI)) {
         straw.rotation.y += 0.1;
         rotations += 0.1;
     } else if (rotations > (input1 * 2 * Math.PI) && input1 != null) {
@@ -176,4 +170,9 @@ function submitInputs() {
     speed = input1;
     speedFac = speed / (((2) * Math.PI * input1) / (0.0156));
     input1Input.value = Math.round(input1 * 100) / 100;
+
+    assembly.position.x = 0;
+    assembly.rotation.z = 0;
+    straw.position.x = 0;
+    straw.rotation.y = Math.acos(64.25 / 145);
 }
