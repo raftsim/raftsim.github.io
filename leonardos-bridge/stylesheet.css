@@ -29,6 +29,14 @@ input {
     width: 100px;
 }
 
+#mass {
+    font-size: 18px;
+    margin-left: 15px;
+    width: 100px;
+    text-align: left;
+    float: right;
+}
+
 #output1, #output2 {
     display: inline-block;
     margin-left: 10px;
