@@ -29,6 +29,11 @@ input {
     width: 100px;
 }
 
+#gap {
+    float: right;
+    width: 139px;
+}
+
 #output {
     display: inline-block;
     margin-left: 10px;
