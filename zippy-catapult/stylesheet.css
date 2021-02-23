@@ -65,3 +65,10 @@ input {
     float: right;
     text-align: center;
 }
+
+a {
+    color: white;
+    float: right;
+    text-align: center;
+    width: 100%;
+}

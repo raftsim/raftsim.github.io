@@ -147,86 +147,86 @@ function createSticks() {
 }
 
 function resetSticks() {
-    
+
     sticks[0].position.x = -115;
     sticks[0].position.z = -6.35;
     sticks[0].rotation.y = -0.07;
-    
+
     sticks[1].rotation.z = 1.5707963268;
     sticks[1].position.x = 0;
     sticks[1].position.y = 101.5;
     sticks[1].position.z = -3.175;
-    
+
     sticks[2].rotation.z = 1.5707963268;
     sticks[2].position.x = 0;
     sticks[2].position.y = -101.5;
     sticks[2].position.z = -3.175;
-    
+
     sticks[3].position.x = 115;
     sticks[3].position.z = -6.35;
     sticks[3].rotation.y = 0.07;
-    
+
     sticks[4].rotation.z = 1.5707963268;
     sticks[4].position.x = 115;
     sticks[4].position.y = 74.5;
     sticks[4].position.z = -12;
     sticks[4].rotation.y = 0.145;
-    
+
     sticks[5].rotation.z = 1.5707963268;
     sticks[5].position.x = 115;
     sticks[5].position.y = -74.5;
     sticks[5].position.z = -12;
     sticks[5].rotation.y = 0.145;
-    
+
     sticks[6].rotation.z = 1.5707963268;
     sticks[6].position.x = -115;
     sticks[6].position.y = -74.5;
     sticks[6].position.z = -12;
     sticks[6].rotation.y = -0.145;
-    
+
     sticks[7].rotation.z = 1.5707963268;
     sticks[7].position.x = -115;
     sticks[7].position.y = 74.5;
     sticks[7].position.z = -12;
     sticks[7].rotation.y = -0.145;
-    
+
     sticks[8].position.x = -230;
     sticks[8].position.z = -6.35;
     sticks[8].position.z = -26;
     sticks[8].rotation.y = -0.145;
-    
+
     sticks[9].rotation.z = 1.5707963268;
     sticks[9].position.x = -230;
     sticks[9].position.y = 101.5;
     sticks[9].position.z = -38.5;
     sticks[9].rotation.y = -0.34;
-    
+
     sticks[10].rotation.z = 1.5707963268;
     sticks[10].position.x = -230;
     sticks[10].position.y = -101.5;
     sticks[10].position.z = -38.5;
     sticks[10].rotation.y = -0.34;
-    
+
     sticks[11].position.x = -345;
     sticks[11].position.z = -6.35;
     sticks[11].position.z = -77;
     sticks[11].rotation.y = -0.4;
-    
+
     sticks[12].rotation.z = 1.5707963268;
     sticks[12].position.x = -331.5;
     sticks[12].position.y = -74.5;
     sticks[12].position.z = -81;
     sticks[12].rotation.y = -0.515;
-    
+
     sticks[13].rotation.z = 1.5707963268;
     sticks[13].position.x = -331.5;
     sticks[13].position.y = 74.5;
     sticks[13].position.z = -81;
     sticks[13].rotation.y = -0.515;
-    
+
     sticks[14].position.x = 0;
     sticks[14].position.z = 0;
-    
+
     sticks[15].position.x = 230;
     sticks[15].position.z = -6.35;
     sticks[15].position.z = -26;
