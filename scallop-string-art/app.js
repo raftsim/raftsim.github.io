@@ -27,6 +27,7 @@ let gapMax = 16;
 var angle;
 
 var gap = document.getElementById("gap");
+var colorPicker = document.getElementById("colorPicker");
 
 init();
 animate();
@@ -67,8 +68,10 @@ function init() {
 
     });
 
+    colorPicker.value = "#" + color().getHexString();
+
     stringPoints.push(new THREE.Vector3(46.5, dis, 0));
-    var lineMat = new THREE.LineBasicMaterial({ color: color() });
+    var lineMat = new THREE.LineBasicMaterial({ color: colorPicker.value });
     var lineGeo = new THREE.BufferGeometry().setFromPoints(stringPoints);
     string = new THREE.Line(lineGeo, lineMat);
     scene.add(string);
@@ -183,7 +186,7 @@ function submitInputs() {
     stringPoints.push(new THREE.Vector3(46.5, dis, 0));
     string.geometry.setFromPoints(stringPoints);
 
-    string.material.color = color();
+    string.material.color = new THREE.Color(colorPicker.value);
 
     gap = document.getElementById("gap");
 
