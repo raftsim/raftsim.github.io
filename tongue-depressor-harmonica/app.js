@@ -319,8 +319,6 @@ function submitInputs() {
         sound.stop();
     }
 
-    document.getElementById("output-text").style.visibility = "hidden";
-
     input1 = clip(sGapInput.value, sGapMin, sGapMax);
     sGapInput.value = Math.round(input1 * 100) / 100;
 
