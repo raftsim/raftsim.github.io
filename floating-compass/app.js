@@ -85,7 +85,7 @@ function init() {
     let unitCircleRadius = 5.99;
 
     var circleGeometry = new THREE.CircleGeometry(unitCircleRadius, 64);
-    
+
     var circleTop = new THREE.Mesh(circleGeometry, materialGray);
     circleTop.rotation.x = -Math.PI / 2;
     circleTop.position.y = -0.01;

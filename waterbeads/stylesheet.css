@@ -79,3 +79,10 @@ table, th, tr, td {
     border-collapse: collapse;
     padding: 7px;
 }
+
+a {
+    color: white;
+    float: right;
+    text-align: center;
+    width: 100%;
+}
