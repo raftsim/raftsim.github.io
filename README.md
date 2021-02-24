@@ -34,6 +34,7 @@
 - This is where the bulk of the code logic will go. In the `init()` function, you must change the imports to reflect the models you will be using.
 - You will also have to change the variables to reflect the inputs, outputs, models, and data used by the simulation.
 - The `render()` and `submitInputs()` functions are where the bulk of the simulation's logic will be. You must rewrite these functions to suit your needs, as I cannot give you specific instructions on what your kit entails.
+- For help using the three.js library, consult the [documentation](https://threejs.org/docs/) and [examples](https://threejs.org/examples/).
 
 ### 7. Test the code you have written and iron out bugs.
 - No code is perfect on its first iteration, and these simulations need to be easily accessible to all.
