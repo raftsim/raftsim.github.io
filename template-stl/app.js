@@ -111,9 +111,9 @@ function render() {
 }
 
 function clip(input, limit1, limit2) {
-    if (input < limit1) {
+    if (limit1 != null && input < limit1) {
         return limit1;
-    } else if (input > limit2) {
+    } else if (limit2 != null && input > limit2) {
         return limit2;
     } else {
         return input;
