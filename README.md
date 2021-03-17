@@ -136,7 +136,10 @@ Gravity (g): <input type="number" value=50 id="gravity"><br>
     let gravityInput = document.getElementById("gravity");
     ```
 
-#### b. Update `init()` function
+#### b. Update `init()` function (`.obj` version)
+
+*Skip this step if the models are stored in `.stl` files*
+
 1. Below the onError() function (not inside it), replace the example code and add object imports into the curly braces corresponding to 3D object variables created in step a.
 
     ```js
@@ -179,7 +182,27 @@ Gravity (g): <input type="number" value=50 id="gravity"><br>
     }
     ```
 
-#### c. Update `submitInputs()` and `sendValues()` functions
+#### c. Update `init()` function (`.stl` version)
+
+*Skip this step if the models are stored in `.obj` files*
+
+- Below the definition of `var loader` and `var material`, replace the `loader.load()` function.
+- One `loader.load()` is required for each 3D object variable defined in step a.1
+- Insert the following code then prepare to modify:
+
+```js
+loader.load('objects/assembly.stl', function (geometry) {
+
+    assembly = new THREE.Mesh(geometry, material);
+    scene.add(assembly);
+
+});
+```
+
+- On the first line, replace `assembly.stl` with the name of the `.stl` file being imported
+- Within the function, replace the two references to `assembly` with the object variable being used. 
+
+#### d. Update `submitInputs()` and `sendValues()` functions
 1. Replace the existing input code with one line for each input variable/html tag.
     - Use the `clip()` method to restrict a value within the min and max values
     - If a certain variable has no min **or** no max, use `null` instead of that boundary
@@ -208,7 +231,7 @@ Gravity (g): <input type="number" value=50 id="gravity"><br>
     }
     ```
 
-#### d. Before continuing, open `index.html` in a browser to check for any bugs.
+#### e. Before continuing, open `index.html` in a browser to check for any bugs.
 - If using Visual Studio Code, the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension can be used to create a live preview that updates every time any file is changed and saved.
 
 ![](/storage/instructions/live.png)
@@ -221,8 +244,8 @@ Gravity (g): <input type="number" value=50 id="gravity"><br>
 
 *All the ZIppy Catapult objects loaded into three.js*
 
-#### e. Update starting positions
-In `loadModel()` (in `init()`), after each model is added to `scene`, set its starting position and rotation using `[object].position.x/y/z` and `[object].rotation.x/y/z` like so:
+#### f. Update starting positions
+- *For `.obj` files:* In `loadModel()` (in `init()`), after each model is added to `scene`, set its starting position and rotation using `[object].position.x/y/z` and `[object].rotation.x/y/z` like so:
 
 ```js
 function loadModel() {
@@ -248,6 +271,35 @@ function loadModel() {
 }
 ```
 
+*For `.stl` files:* In each `loader.load()` (in `init()`), immediately before each model is added to `scene`, set its starting position and rotation using `[object].position.x/y/z` and `[object].rotation.x/y/z` like so:
+
+```js
+loader.load('objects/base.stl', function (geometry) {
+
+    base = new THREE.Mesh(geometry, material);
+    base.position.x = 6;
+    base.position.y = -55;
+    base.position.z = 10;
+
+    base.rotation.x = -Math.PI / 2;
+
+    scene.add(base);
+});
+
+loader.load('objects/frog.stl', function (geometry) {
+
+    frog = new THREE.Mesh(geometry, material);
+
+    frog.rotation.z = 0;
+    frog.rotation.y = 0;
+    frog.rotation.x = 0.68 - Math.PI / 2;
+    frog.rotation.x = -0.95;
+
+    scene.add(frog);
+});
+
+```
+
 The position values are along the given axis and the rotation values are in radians about the given axis (relative to the object). It is also recommended to update the initial camera position as necessary by adjusting the camera's x, y, and z positions. The camera does not need to be rotated, as it will always point toward the coordinates given by the `targetPos` object (a `THREE.Vector3` that stores x, y, and z coordinates and is set to the origin by default).
 
 ```js
@@ -255,7 +307,7 @@ camera.position.z = 20;
 camera.position.y = 2;
 ```
 
-#### f. Update `render()` function
+#### g. Update `render()` function
 - Three.js begins the animation loop by running `animate()`, which repeatedly calls `render()`, where most of the simulation's logic is based.
 - By default, `render()` contains two TODOs, "Change camera target here" and "change object positions, rotations, states, etc here".
     - Replace the first TODO with any code to adjust the camera's focusing point.
@@ -267,7 +319,7 @@ camera.position.y = 2;
             ```
     - Replace the second TODO with the simulation's actual logic. This is where inputs are used to set outputs and change the positions and rotations of the objects on screen. If additional variables are needed (like in Zippy Catapult), create them near the top of the code file under the existing variables, and if additional three.js modules are needed, import them from [unpkg.com](https://unpkg.com/three) using the directory structure from three.js' [GitHub repository](https://github.com/mrdoob/three.js).
 
-#### g. Update `submitInputs()` (pt. 2)
+#### h. Update `submitInputs()` (pt. 2)
 - `submitInputs()` runs every time the "Start" button is clicked. Code to reset the simulation to its initial state should go here, as should any other code needed to reset the values of additional variables.
 
 ### 7. Test the code and iron out bugs.
