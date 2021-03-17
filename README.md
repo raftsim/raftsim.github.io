@@ -8,7 +8,7 @@
 - Parts that don't move independently of each other (like the popsicle sticks from Zippy Catapult) can be made into an assembly, since it is easier to position fixed objects in CAD than using JS.
 - We used Autodesk Fusion 360 and OnShape to create our CAD designs. Both are free for students but expensive otherwise, so they may not be great options. The important thing to keep in mind when choosing a CAD software is exporting to a text-based file format, which can either be `.obj` or `.stl`. Fusion 360 includes obj files as an export option, while OnShape has stl files.
 - Maintaining consistent units is important to ensure parts actually scale properly with each other.
-- You have to make sure the origin point of each part or assembly is where you want it to be, or you won't be able to properly control the positioning of each part through code
+- The origin point of each part or assembly is where its position and rotation will be manipulated from. Ensure this point is easy to make calculations for if the kit requires that complexity.
 
 Completed Zippy Catapult CAD in Autodesk Fusion 360:
 ![](/storage/instructions/cad-assembly.png)
@@ -26,22 +26,22 @@ Completed Zippy Catapult CAD in Autodesk Fusion 360:
 ![](/storage/instructions/cad-export.png)
 *.obj export screen in Fusion 360*
 
-**Before continuing to the coding section, you will need the following software tools:**
+**Before continuing to the coding section, the following software tools are necessary:**
 - Access to command line (ex. Terminal, bash)
 - [Git](https://git-scm.com)
 - A [GitHub](https://github.com) account with access to the [raftsim.github.io](https://github.com/raftsim/raftsim.github.io) or other intended repository
 - A Git client if desired
-	- Useful if your knowledge/experience with Git's command line interface is limited
+	- Useful if knowledge/experience with Git's command line interface is limited
 	- We use [Sourcetree](https://sourcetreeapp.com)
 - A code editor or web development-focused IDE
 	- We use [Visual Studio Code](https://code.visualstudio.com)
 
 ### 3. Clone the raftsim.github.io repository to a local computer
 - Instructions for the command line and GitHub Desktop can be found [here](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository).
-- Choosing between command line, GitHub Desktop, or some other Git client is entirely up to the user, however, some knowledge of the command line is recommended if you choose that option.
-	- If you wish to use a Git client, look up instructions for cloning repositories with that client.
+- Choosing between command line, GitHub Desktop, or some other Git client is entirely up to the user, however, some knowledge of the command line is recommended if selecting that option.
+	- To use a third-party Git client, look up instructions for cloning repositories with that client.
 	- Instructions for Sourcetree [here](https://confluence.atlassian.com/sourcetreekb/clone-a-repository-into-sourcetree-780870050.html)
-- Once cloned, create a branch for the simulation you are working on (or checkout an existing branch).
+- Once cloned, create a branch for the simulation to be worked on (or checkout an existing branch).
 	- Instructions to do either of these via the command line can be found [here](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging).
 	- Instructions for GitHub Desktop [here](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/managing-branches)
 	- Instructions for Sourcetree [here](https://confluence.atlassian.com/sourcetreekb/branch-management-785325799.html)
@@ -49,9 +49,9 @@ Completed Zippy Catapult CAD in Autodesk Fusion 360:
 	- Ex: `zippy-catapult`, `leonardos-bridge`
 
 ### 4. If a kit folder does not already exist, create one
-- More specifically, duplicate the `template-obj` or `template-stl` folder (depending on what type of model file you have) and rename the new folder the same as the branch.
+- More specifically, duplicate the `template-obj` or `template-stl` folder (depending on the models' file format) and rename the new folder the same as the branch.
 - This folder name will also be the url where the kit can be accessed (ex. `raftsim.github.io/zippy-catapult`)
-- Inside this kit folder, create an `objects` folder (if it doesn't already exist) and move the `.obj` or `.stl` files you exported into this new folder. Use a uniform style/convention to name all the model files.
+- Inside this kit folder, create an `objects` folder (if it doesn't already exist) and move the exported `.obj` or `.stl` files into this new folder. Use a uniform style/convention to name all the model files.
 	- Ex. all file names could use the same naming convention as the folders and branches: `magnet-north.stl`, `magnet-south.stl`
 
 ![](/storage/instructions/folder.png)
@@ -270,17 +270,45 @@ camera.position.y = 2;
 #### g. Update `submitInputs()` (pt. 2)
 - `submitInputs()` runs every time the "Start" button is clicked. Code to reset the simulation to its initial state should go here, as should any other code needed to reset the values of additional variables.
 
-### 7. Test the code you have written and iron out bugs.
+### 7. Test the code and iron out bugs.
 - No code is perfect on its first iteration, and these simulations need to be easily accessible to all.
 - After writing the first draft of the code, debug it and work to improve performance toward an optimal revision.
 
-### 8. Throughout the process of writing code, commit and push your changes to GitHub to maintain a log of the changes you make.
+### 8. Throughout the process of writing code, commit and push all changes to GitHub to maintain a detailed log.
 - Further instructions available [here](https://docs.github.com/en/github/committing-changes-to-your-project).
 
-### 9. After finishing a kit, you must submit a pull request through GitHub.com (see [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/proposing-changes-to-your-work-with-pull-requests)).
+### 9. After completing the simulation itself, a link and photo must be added to the homepage.
+
+#### a. Load the simulation in a browser and take a screenshot.
+- Ensure the entire model is visible and not cropped out, and if necessary, rotate to make the simulation more recognizable and comparable to the physical kit.
+- Crop the screenshot to remove any and all buffer space between the edges of the picture and the model (each of the end result's 4 sides should be touching the kit in some place).
+- Using a photo editor or other design tool (like Adobe Illustrator), create a 1380x1036 canvas with a black background and put the screenshot at its center.
+- Resize the screenshot (maintaining its aspect ratio and keeping it in the center) so that its longer edge is exactly 56px shorter than the corresponding side of the canvas.
+- Export this canvas as a `.png` file, with the same name as the simulation folder and "-thumbnail" added to the end
+    - Ex. `zippy-catapult-thumbnail.png`
+- Move this image to `/storage/thumbnails/` and move any supporting files (like a Photoshop or Illustrator document) to `/storage/thumbnails/photo files/`
+
+#### b. Add the link and image to the root-level `index.html` file
+- In `index.html`, find `<div class="container">` on line 31.
+- Directly inside this opening tag, before the existing `<a>` tags, create a new line for a new `<a>` tag.
+- Insert the following code (it will be modified):
+```html
+<a class="item" id="zippy-catapult" href="zippy-catapult/">
+    <img src="storage/thumbnails/zippy-catapult-thumbnail.png" alt="">
+    <h3>Zippy Catapult</h3>
+</a>
+```
+- Change the `id` and `href` of the `<a>` tag to the simulation's folder name (include the `/` for the `href`, which refers to the folder as a link).
+- On the second line, change the `src` of the `<img>` tag to the address of the thumbnail photo from step a (the folder name with "-thumbnail" appended).
+- On the third line, change the contents of the `<h3>` tag to the name of the simulation, capitalized normally (as it appears on the kit's packaging).
+
+#### c. Open `index.html` (root-level) in a browser to ensure the changes were successful
+- The CSS for this file uses [Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) to automatically create a grid layout.
+- Make sure the grid is properly organized and sized, and the title and image appear properly (with no typos or pixelization).
+- If there are any issues, review steps a and b to ensure the image and code were both formatted properly.
+
+### 10. After finishing a kit, submit a pull request through GitHub.com (see [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/proposing-changes-to-your-work-with-pull-requests)).
 - This pull request must be reviewed by at least one other person with write access to the repository before it can be merged into the `main` branch.
 - If there are issues with the merge, a merge conflict will arise (instructions for resolving a conflict are [here](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/addressing-merge-conflicts).
 
-### 10. If there are no issues (or after the issues are fixed and resolved), you can merge the pull request after an approving review and the new code will be updated and available at the `raftsim.github.io` page momentarily.
-
-## Congrats, you've successfully created a kit simulation!
+### 11. If there are no issues (or after the issues are fixed and resolved), merge the pull request after an approving review and the new code will be updated and available at the `raftsim.github.io` page momentarily.
