@@ -15,7 +15,7 @@
     <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
     <script>
         sizes = [40, 58, 60, 80, 87, 120, 152, 167, 180, 512];
-        
+
         sizes.forEach(i => {
             $('head').append('<link rel="apple-touch-icon" sizes="' + i + 'x' + i + '" href="storage/ios/ios-' + (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark-' : '') + i + '.png" />');
         });
@@ -69,6 +69,13 @@
             <img src="storage/thumbnails/zippy-catapult-thumbnail.png" alt="">
             <h3>Zippy Catapult</h3>
         </a>
+    </div>
+    <div id="footer">
+        <br>
+        <a id="maintenance" href="https://github.com/raftsim/raftsim.github.io/blob/main/CONTRIBUTING.md">Maintenance
+            Document</a>
+        &emsp;&emsp;
+        <a id="design" href="https://github.com/raftsim/raftsim.github.io/blob/main/DESIGN.pdf">Design Document</a>
     </div>
 </body>
 
